@@ -39,9 +39,11 @@ public class Writer {
 		if (checkBloomFilter(hash)) {
 			// check segment Index and add it to container if not
 			// present in it.
-			if (segmentIndexStore.get(hash) == null) {
+			String containerId = segmentIndexStore.get(hash);
+			if (containerId == null) {
 				containerManager.addIntoContainer(hash, data, dataLength);
 			} else {
+				containerManager.addContainerMetadataIntoCache(containerId);
 				return;
 			}
 

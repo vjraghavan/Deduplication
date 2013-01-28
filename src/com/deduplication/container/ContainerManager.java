@@ -64,6 +64,11 @@ public class ContainerManager {
 	public boolean isIndexInCurrentContainer(String hash){
 		return currentContainerIndex.contains(hash);
 	}
+	
+	public void addContainerMetadataIntoCache(String containerId){
+		//TODO
+	}
+	
 	private void persistDataContainer(String containerId, List<Byte> byteContentList) {
 		containerStore.put(containerId, byteContentList);
 	}
