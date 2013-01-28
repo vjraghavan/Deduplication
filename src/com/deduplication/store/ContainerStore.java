@@ -7,8 +7,6 @@ package com.deduplication.store;
  */
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.sleepycat.je.DatabaseException;
@@ -77,14 +75,17 @@ public class ContainerStore {
 	}
 
 	public void put(String containerId, List<Byte> byteContentList ){
+		
 		containerStoreDao.containerByContainerId.put(new Container(containerId, byteContentList));
 	}
 	
 	public List<Byte> get(String containerId){
-		return containerStoreDao.containerByContainerId.get(containerId).byteContentList;
+		
+		Container result = containerStoreDao.containerByContainerId.get(containerId);
+		return (result == null ? null : result.byteContentList);
 	}
 	
-	private void close() throws DatabaseException {
+	public void close() throws DatabaseException {
 
 		containerStore.close();
 		env.close();

@@ -71,25 +71,18 @@ public class SegmentIndexStore {
 		dao = new SegmentIndexAccessor(store);
 	}
 
-	private void run() throws DatabaseException {
-
-		//SegmentIdentifier one = new SegmentIdentifier("Bob Smith", new String(
-		//		"first"));
-		// dao.containerIdByHash.put(one);
-		// System.out.println("Key :" + one.key + "Value : " + one.containerId
-		// );
-
-		// dao.containerIdByHash.put(new SegmentIdentifier("Mary Smith", new
-		// String("two")));
-
-		SegmentIdentifier resultIdentifier = dao.containerIdByHash
-				.get("Bob Smith");
-		assert resultIdentifier != null;
-		System.out.println("Key :" + "Bob Smith, " + "Value : "
-				+ resultIdentifier.containerId);
+	public void put(String hash, String containerId){
+		
+		dao.containerIdByHash.put(new SegmentIdentifier(hash, containerId));
+	}
+	
+	public String get(String hash){
+		
+		SegmentIdentifier result = dao.containerIdByHash.get(hash);
+		return (result == null ? null : result.containerId);
 	}
 
-	private void close() throws DatabaseException {
+	public void close() throws DatabaseException {
 
 		store.close();
 		env.close();
@@ -98,7 +91,6 @@ public class SegmentIndexStore {
 	public static void main(String[] args) throws DatabaseException {
 
 		SegmentIndexStore putGet = new SegmentIndexStore(new File("/home/vijay/testDb"));
-		putGet.run();
 		putGet.close();
 	}
 }

@@ -8,8 +8,6 @@ package com.deduplication.store;
  */
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import com.sleepycat.je.DatabaseException;
@@ -114,10 +112,11 @@ public class ContainerMetadataStore {
 	}
 
 	public List<SegmentMetadata> get(String containerId) {
-		return dao.metadataByContainerId.get(containerId).metadata.metadataList;
+		ContainerMetadata containerMetadata = dao.metadataByContainerId.get(containerId);
+		return (containerMetadata == null ? null : containerMetadata.metadata.metadataList);
 	}
 
-	private void close() throws DatabaseException {
+	public void close() throws DatabaseException {
 
 		metadataStore.close();
 		env.close();
