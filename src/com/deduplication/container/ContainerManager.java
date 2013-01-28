@@ -1,8 +1,10 @@
 package com.deduplication.container;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import com.deduplication.store.ContainerMetadataStore;
@@ -19,8 +21,9 @@ public class ContainerManager {
 	private ContainerMetadataStore containerMetadataStore;
 	private ContainerStore containerStore;
     private SegmentIndexStore segmentIndexStore;
-    
-	public ContainerManager(ContainerMetadataStore containerMetadataStore,
+    private Set<String> currentContainerIndex;
+	
+    public ContainerManager(ContainerMetadataStore containerMetadataStore,
 			ContainerStore containerStore, SegmentIndexStore segmentIndexStore) {
 
 		this.containerMetadataStore = containerMetadataStore;
@@ -30,6 +33,7 @@ public class ContainerManager {
 		currentContainerId = UUID.randomUUID().toString();
 		currentDataContainer = new ArrayList<Byte>();
 		currentMetadataContainer = new ArrayList<SegmentMetadata>();
+		currentContainerIndex = new HashSet<String>();
 	}
 
 	public void addIntoContainer(String hash, byte[] data, int dataLength) {
@@ -38,6 +42,7 @@ public class ContainerManager {
 
 			currentMetadataContainer.add(new SegmentMetadata(hash,
 					currentDataContainer.size(), dataLength));
+			currentContainerIndex.add(hash);
 			for (byte eachByte : data) {
 				currentDataContainer.add(eachByte);
 			}
@@ -51,10 +56,14 @@ public class ContainerManager {
 			currentContainerId = UUID.randomUUID().toString();
 			currentDataContainer = new ArrayList<Byte>();
 			currentMetadataContainer = new ArrayList<SegmentMetadata>();
+			currentContainerIndex = new HashSet<String>();
 		}
 		
 	}
 
+	public boolean isIndexInCurrentContainer(String hash){
+		return currentContainerIndex.contains(hash);
+	}
 	private void persistDataContainer(String containerId, List<Byte> byteContentList) {
 		containerStore.put(containerId, byteContentList);
 	}

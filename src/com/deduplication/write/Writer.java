@@ -24,26 +24,31 @@ public class Writer {
 	}
 
 	void put(String hash, byte[] data, int dataLength) {
+		
 		// check in cache
 		if (checkCache(hash)) {
 			return;
-		} else {
-			// check in bloom filter
-			if (checkBloomFilter(hash)) {
-				// check segment Index and add it to container if not
-				// present in it.
-				if(segmentIndexStore.get(hash) == null){
-					containerManager.addIntoContainer(hash, data, dataLength);
-				}else{
-					return;
-				}
-				
-			} else {
-				containerManager.addIntoContainer(hash, data, dataLength);
-			}
-			
+		}
+
+		// check in current container Index
+		if (containerManager.isIndexInCurrentContainer(hash)) {
+			return;
 		}
 		
+		// check in bloom filter
+		if (checkBloomFilter(hash)) {
+			// check segment Index and add it to container if not
+			// present in it.
+			if (segmentIndexStore.get(hash) == null) {
+				containerManager.addIntoContainer(hash, data, dataLength);
+			} else {
+				return;
+			}
+
+		} else {
+			containerManager.addIntoContainer(hash, data, dataLength);
+		}
+
 	}
 
 	private boolean checkCache(String hash) {
