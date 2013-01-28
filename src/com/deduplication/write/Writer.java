@@ -4,34 +4,38 @@ import java.util.List;
 
 import com.deduplication.bloomfilter.BloomFilter;
 import com.deduplication.cache.Cache;
+import com.deduplication.container.ContainerManager;
 
 public class Writer {
 	
-	private BloomFilter bf;
+	private BloomFilter bloomFilter;
 	private Cache cache;
+	private ContainerManager containerManager;
 	
-	public Writer(BloomFilter bf, Cache cache){
-		this.bf = bf;
+	public Writer(BloomFilter bloomFilter, Cache cache, ContainerManager containerManager){
+		this.bloomFilter = bloomFilter;
 		this.cache = cache;
+		this.containerManager = containerManager;
 	}
 	
-	void put(String hash, byte[] data){		
+	void put(String hash, byte[] data, int dataLength){		
+		if(checkCache(hash)){
+			return;
+		}else{
+			if(checkBloomFilter(hash)){
+				// TODO : check segment Index and add it to container if not present in it.
+			}else{
+				containerManager.addIntoContainer(hash, data, dataLength);
+			}
+		}
 	}
 	
 	private boolean checkCache(String hash){
-		return true;
+		return (cache.get(hash) != null ? true : false);
 	}
 	
 	private boolean checkBloomFilter(String hash){
-		return true;
-	}
-	
-	private void addIntoContainer(String hash, byte[] data){
-		
-	}
-	
-	private void persistContainer(String containerId, List<Byte> dataBytes){
-		
+		return bloomFilter.contains(hash);
 	}
 	
 	public static void main(String args[]){

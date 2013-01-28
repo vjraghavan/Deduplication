@@ -76,25 +76,14 @@ public class ContainerStore {
 		containerStoreDao = new ContainerAccessor(containerStore);
 	}
 
-	private void run() throws DatabaseException {
-
-		List<Byte> byteDataList = new ArrayList<Byte>();
-		byteDataList.add(new Byte((byte) 1));
-		byteDataList.add(new Byte((byte) 2));
-		Container container = new Container("key", byteDataList);
-		containerStoreDao.containerByContainerId.put(container);
-
-		Container resultContainer = containerStoreDao.containerByContainerId
-				.get("key");
-		System.out.println("Key : " + resultContainer.key);
-		System.out.println("Value");
-		List<Byte> byteResultList = resultContainer.byteContentList;
-		Iterator<Byte> iter = byteResultList.iterator();
-		while (iter.hasNext()) {
-			System.out.println(iter.next());
-		}
+	public void put(String containerId, List<Byte> byteContentList ){
+		containerStoreDao.containerByContainerId.put(new Container(containerId, byteContentList));
 	}
-
+	
+	public List<Byte> get(String containerId){
+		return containerStoreDao.containerByContainerId.get(containerId).byteContentList;
+	}
+	
 	private void close() throws DatabaseException {
 
 		containerStore.close();
@@ -105,7 +94,6 @@ public class ContainerStore {
 
 		ContainerStore putGet = new ContainerStore(new File(
 				"/home/vijay/containerDb"));
-		putGet.run();
 		putGet.close();
 	}
 }

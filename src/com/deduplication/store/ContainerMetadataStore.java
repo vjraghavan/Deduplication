@@ -1,4 +1,5 @@
 package com.deduplication.store;
+
 /*-
  * See the file LICENSE for redistribution information.
  *
@@ -54,7 +55,7 @@ public class ContainerMetadataStore {
 	}
 
 	@Persistent
-	static class SegmentMetadata {
+	public static class SegmentMetadata {
 
 		String hash;
 		long offset;
@@ -107,31 +108,13 @@ public class ContainerMetadataStore {
 		dao = new MetadataAccessor(metadataStore);
 	}
 
-	private void run() throws DatabaseException {
+	public void put(String containerId, List<SegmentMetadata> metadataContainer) {
+		dao.metadataByContainerId.put(new ContainerMetadata(containerId,
+				new Metadata(metadataContainer)));
+	}
 
-		List<SegmentMetadata> segmentMetadataList = new ArrayList<SegmentMetadata>();
-		SegmentMetadata firstData = new SegmentMetadata("firstData", 25, 25);
-		SegmentMetadata secondData = new SegmentMetadata("secondData", 30, 30);
-		segmentMetadataList.add(firstData);
-		segmentMetadataList.add(secondData);
-
-		Metadata metadata = new Metadata(segmentMetadataList);
-		ContainerMetadata containerMetadata = new ContainerMetadata("key",
-				metadata);
-		dao.metadataByContainerId.put(containerMetadata);
-
-		ContainerMetadata resultMetadata = dao.metadataByContainerId.get("key");
-		System.out.println("Key : " + resultMetadata.key);
-
-		System.out.println("Value");
-		Metadata value = resultMetadata.metadata;
-		Iterator<SegmentMetadata> iter = value.metadataList.iterator();
-		while (iter.hasNext()) {
-			SegmentMetadata segmentMetadata = iter.next();
-			System.out.println("Hash : " + segmentMetadata.hash + " Length : "
-					+ segmentMetadata.length + " Offset : "
-					+ segmentMetadata.offset);
-		}
+	public List<SegmentMetadata> get(String containerId) {
+		return dao.metadataByContainerId.get(containerId).metadata.metadataList;
 	}
 
 	private void close() throws DatabaseException {
@@ -144,7 +127,6 @@ public class ContainerMetadataStore {
 
 		ContainerMetadataStore putGet = new ContainerMetadataStore(new File(
 				"/home/vijay/containerDB"));
-		putGet.run();
 		putGet.close();
 	}
 }
