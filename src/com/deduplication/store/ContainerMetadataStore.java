@@ -55,9 +55,9 @@ public class ContainerMetadataStore {
 	@Persistent
 	public static class SegmentMetadata {
 
-		String hash;
-		long offset;
-		int length;
+		public String hash;
+		public long offset;
+		public int length;
 
 		public SegmentMetadata(String hash, long offset, int length) {
 			this.hash = hash;

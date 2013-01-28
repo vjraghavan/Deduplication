@@ -1,10 +1,12 @@
 package com.deduplication.container;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
 import com.deduplication.store.ContainerMetadataStore;
+import com.deduplication.store.SegmentIndexStore;
 import com.deduplication.store.ContainerMetadataStore.SegmentMetadata;
 import com.deduplication.store.ContainerStore;
 
@@ -16,12 +18,15 @@ public class ContainerManager {
 	private List<SegmentMetadata> currentMetadataContainer;
 	private ContainerMetadataStore containerMetadataStore;
 	private ContainerStore containerStore;
-
+    private SegmentIndexStore segmentIndexStore;
+    
 	public ContainerManager(ContainerMetadataStore containerMetadataStore,
-			ContainerStore containerStore) {
+			ContainerStore containerStore, SegmentIndexStore segmentIndexStore) {
 
 		this.containerMetadataStore = containerMetadataStore;
 		this.containerStore = containerStore;
+		this.segmentIndexStore = segmentIndexStore;
+		
 		currentContainerId = UUID.randomUUID().toString();
 		currentDataContainer = new ArrayList<Byte>();
 		currentMetadataContainer = new ArrayList<SegmentMetadata>();
@@ -41,7 +46,13 @@ public class ContainerManager {
 			persistDataContainer(currentContainerId, currentDataContainer);
 			persistMetadataContainer(currentContainerId,
 					currentMetadataContainer);
+			persistSegmentIndex(currentContainerId, currentMetadataContainer);
+			
+			currentContainerId = UUID.randomUUID().toString();
+			currentDataContainer = new ArrayList<Byte>();
+			currentMetadataContainer = new ArrayList<SegmentMetadata>();
 		}
+		
 	}
 
 	private void persistDataContainer(String containerId, List<Byte> byteContentList) {
@@ -51,6 +62,15 @@ public class ContainerManager {
 	private void persistMetadataContainer(String currentContainerId,
 			List<SegmentMetadata> currentMetadataContainer) {
 		containerMetadataStore.put(currentContainerId, currentMetadataContainer);	
+	}
+	
+	private void persistSegmentIndex(String currentContainerId,
+			List<SegmentMetadata> currentMetadataContainer) {
+		
+		Iterator<SegmentMetadata> iter = currentMetadataContainer.iterator();
+		while(iter.hasNext()){
+			segmentIndexStore.put(iter.next().hash, currentContainerId);
+		}
 	}
 
 }
