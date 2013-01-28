@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import com.deduplication.cache.Cache;
 import com.deduplication.store.ContainerMetadataStore;
 import com.deduplication.store.SegmentIndexStore;
 import com.deduplication.store.ContainerMetadataStore.SegmentMetadata;
@@ -22,11 +23,13 @@ public class ContainerManager {
 	private ContainerStore containerStore;
     private SegmentIndexStore segmentIndexStore;
     private Set<String> currentContainerIndex;
+    private Cache cache;
 	
-    public ContainerManager(ContainerMetadataStore containerMetadataStore,
+    public ContainerManager(Cache cache, ContainerMetadataStore containerMetadataStore,
 			ContainerStore containerStore, SegmentIndexStore segmentIndexStore) {
 
-		this.containerMetadataStore = containerMetadataStore;
+		this.cache = cache;
+    	this.containerMetadataStore = containerMetadataStore;
 		this.containerStore = containerStore;
 		this.segmentIndexStore = segmentIndexStore;
 		
@@ -66,7 +69,11 @@ public class ContainerManager {
 	}
 	
 	public void addContainerMetadataIntoCache(String containerId){
-		//TODO
+		
+		Iterator<SegmentMetadata> iter = containerMetadataStore.get(containerId).iterator();
+		while(iter.hasNext()){
+			cache.set(iter.next().hash, containerId);
+		}
 	}
 	
 	private void persistDataContainer(String containerId, List<Byte> byteContentList) {
