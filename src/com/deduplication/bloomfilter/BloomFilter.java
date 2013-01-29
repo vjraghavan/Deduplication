@@ -38,7 +38,9 @@ import java.util.Collection;
  * @author Magnus Skjegstad <magnus@skjegstad.com>
  */
 public class BloomFilter<E> implements Serializable {
-    private BitSet bitset;
+    
+	private static final long serialVersionUID = 1L;
+	private BitSet bitset;
     private int bitSetSize;
     private double bitsPerElement;
     private int expectedNumberOfFilterElements; // expected (maximum) number of elements to be added
