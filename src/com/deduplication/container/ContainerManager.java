@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.deduplication.bloomfilter.BloomFilter;
-import com.deduplication.cache.Cache;
+import com.deduplication.cache.WriteCache;
 import com.deduplication.store.ContainerMetadataStore;
 import com.deduplication.store.SegmentIndexStore;
 import com.deduplication.store.ContainerMetadataStore.SegmentMetadata;
@@ -24,10 +24,10 @@ public class ContainerManager {
 	private ContainerStore containerStore;
 	private SegmentIndexStore segmentIndexStore;
 	private Set<String> currentContainerIndex;
-	private Cache cache;
+	private WriteCache cache;
 	private BloomFilter<String> bloomFilter;
 
-	public ContainerManager(Cache cache,
+	public ContainerManager(WriteCache cache,
 			ContainerMetadataStore containerMetadataStore,
 			ContainerStore containerStore, SegmentIndexStore segmentIndexStore,
 			BloomFilter<String> bloomFilter) {
@@ -79,7 +79,7 @@ public class ContainerManager {
 
 	}
 
-	public boolean isIndexInCurrentContainer(String hash) {
+	public boolean isHashInCurrentContainer(String hash) {
 		return currentContainerIndex.contains(hash);
 	}
 

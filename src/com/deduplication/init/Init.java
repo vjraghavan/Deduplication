@@ -1,12 +1,16 @@
 package com.deduplication.init;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.spy.memcached.MemcachedClient;
+
 import com.deduplication.bloomfilter.BloomFilter;
-import com.deduplication.cache.Cache;
+import com.deduplication.cache.WriteCache;
 import com.deduplication.container.ContainerManager;
 import com.deduplication.store.ContainerMetadataStore;
 import com.deduplication.store.ContainerStore;
@@ -20,26 +24,26 @@ public class Init {
 	private ContainerManager containerManager;
 
 	private SegmentIndexStore segmentIndexStore;
-	private Cache cache;
+	private WriteCache writeCache;
 	private BloomFilter bloomFilter;
 	private Writer writer;
 
 	public Init(ContainerStore containerStore,
 			ContainerMetadataStore containerMetadataStore,
 			ContainerManager containerManager,
-			SegmentIndexStore segmentIndexStore, Cache cache,
+			SegmentIndexStore segmentIndexStore, WriteCache writeCache,
 			BloomFilter<String> bloomFilter, Writer writer) {
 
 		this.containerStore = containerStore;
 		this.containerMetadataStore = containerMetadataStore;
 		this.containerManager = containerManager;
 		this.segmentIndexStore = segmentIndexStore;
-		this.cache = cache;
+		this.writeCache = writeCache;
 		this.bloomFilter = bloomFilter;
 		this.writer = writer;
 	}
 
-	public static void main(String args[]) {
+	public static void main(String args[]) throws IOException {
 
 		ContainerStore containerStore = new ContainerStore(new File(
 				"/home/vijay/Archive/ContainerStore"));
@@ -47,13 +51,13 @@ public class Init {
 				new File("/home/vijay/Archive/ContainerMetadataStore"));
 		SegmentIndexStore segmentIndexStore = new SegmentIndexStore(new File(
 				"/home/vijay/Archive/SegmentIndexStore"));
-		Cache cache = new Cache();
+		WriteCache writeCache = new WriteCache();
 		BloomFilter<String> bloomFilter = new BloomFilter<String>(0.001,
 				Integer.MAX_VALUE);
-		ContainerManager containerManager = new ContainerManager(cache,
+		ContainerManager containerManager = new ContainerManager(writeCache,
 				containerMetadataStore, containerStore, segmentIndexStore,
 				bloomFilter);
-		Writer writer = new Writer(cache, bloomFilter, segmentIndexStore,
+		Writer writer = new Writer(writeCache, bloomFilter, segmentIndexStore,
 				containerManager);
 
 		byte[] data1 = new byte[3];
@@ -80,10 +84,18 @@ public class Init {
 		writer.put("data3", data3, data3.length);
 		writer.put("data4", data4, data4.length);
 
-		System.out.println(cache.get("data1"));
+		System.out.println(writeCache.get("data1"));
 
 		System.out.println(containerMetadataStore.get(new Long(1)));
 		System.out.println(containerMetadataStore.get(new Long(25)));
+		
+		
+		MemcachedClient readCache = new MemcachedClient(
+			    new InetSocketAddress("localhost", 1122));
+		readCache.add("reader", 3600, "readCache");
+		System.out.println(readCache.get("reader"));
+		
+
 		containerMetadataStore.close();
 		containerStore.close();
 		segmentIndexStore.close();

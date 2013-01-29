@@ -1,30 +1,30 @@
-package com.deduplication.write;
+package com.deduplication.read;
 
 import com.deduplication.bloomfilter.BloomFilter;
-import com.deduplication.cache.WriteCache;
+import com.deduplication.cache.ReadCache;
 import com.deduplication.container.ContainerManager;
 import com.deduplication.store.SegmentIndexStore;
 
-public class Writer {
+public class Reader {
 
-	private WriteCache writeCache;
+	private ReadCache readCache;
 	private BloomFilter<String> bloomFilter;
 	private SegmentIndexStore segmentIndexStore;
 	private ContainerManager containerManager;
 	
-	public Writer(WriteCache writeCache, BloomFilter<String> bloomFilter,
+	public Reader(ReadCache readCache, BloomFilter<String> bloomFilter,
 			SegmentIndexStore segmentIndexStore,
 			ContainerManager containerManager) {
-		this.writeCache = writeCache;
+		this.readCache = readCache;
 		this.bloomFilter = bloomFilter;
 		this.segmentIndexStore = segmentIndexStore;
 		this.containerManager = containerManager;
 	}
 
-	public void put(String hash, byte[] data, int dataLength) {
+	public void get(String hash) {
 		
 		// check in cache
-		if (checkWriteCache(hash)) {
+		if (checkReadCache(hash)) {
 			System.out.println("Writer: cache hit");
 			return;
 		}
@@ -43,25 +43,26 @@ public class Writer {
 			Long containerId = segmentIndexStore.get(hash);
 			if (containerId == null) {
 				System.out.println("Writer: not in segment index");
-				containerManager.addIntoContainer(hash, data, dataLength);
+		//		containerManager.addIntoContainer(hash, data, dataLength);
 			} else {
 				System.out.println("Writer: in segment index");
-				containerManager.addContainerMetadataIntoCache(containerId);
+		//		containerManager.addContainerMetadataIntoCache(containerId);
 				return;
 			}
 
 		} else {
 			System.out.println("Writer: BloomFilter negative");
-			containerManager.addIntoContainer(hash, data, dataLength);
+		//	containerManager.addIntoContainer(hash, data, dataLength);
 		}
 
 	}
 
-	private boolean checkWriteCache(String hash) {
-		return (writeCache.get(hash) != null ? true : false);
+	private boolean checkReadCache(String hash) {
+		return (readCache.get(hash) != null ? true : false);
 	}
 
 	private boolean checkBloomFilter(String hash) {
 		return bloomFilter.contains(hash);
 	}
+
 }
