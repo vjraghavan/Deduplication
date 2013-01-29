@@ -17,7 +17,7 @@ import com.deduplication.store.ContainerStore;
 public class ContainerManager {
 
 	public static final int CONTAINER_LENGTH = 4;
-	private String currentContainerId;
+	private long currentContainerId;
 	private List<Byte> currentDataContainer;
 	private List<SegmentMetadata> currentMetadataContainer;
 	private ContainerMetadataStore containerMetadataStore;
@@ -38,7 +38,7 @@ public class ContainerManager {
 		this.segmentIndexStore = segmentIndexStore;
 		this.bloomFilter = bloomFilter;
 
-		currentContainerId = UUID.randomUUID().toString();
+		currentContainerId = 1;
 		currentDataContainer = new ArrayList<Byte>();
 		currentMetadataContainer = new ArrayList<SegmentMetadata>();
 		currentContainerIndex = new HashSet<String>();
@@ -64,7 +64,7 @@ public class ContainerManager {
 					currentMetadataContainer);
 			persistSegmentIndex(currentContainerId, currentMetadataContainer);
 
-			currentContainerId = UUID.randomUUID().toString();
+			currentContainerId++;
 			currentDataContainer = new ArrayList<Byte>();
 			currentMetadataContainer = new ArrayList<SegmentMetadata>();
 			currentContainerIndex = new HashSet<String>();
@@ -83,7 +83,7 @@ public class ContainerManager {
 		return currentContainerIndex.contains(hash);
 	}
 
-	public void addContainerMetadataIntoCache(String containerId) {
+	public void addContainerMetadataIntoCache(Long containerId) {
 
 		Iterator<SegmentMetadata> iter = containerMetadataStore
 				.get(containerId).iterator();
@@ -92,7 +92,7 @@ public class ContainerManager {
 		}
 	}
 
-	private void persistDataContainer(String containerId,
+	private void persistDataContainer(long containerId,
 			List<Byte> byteContentList) {
 		System.out
 				.println("ContainerManager: Persist Data Container with containerId "
@@ -100,7 +100,7 @@ public class ContainerManager {
 		containerStore.put(containerId, byteContentList);
 	}
 
-	private void persistMetadataContainer(String currentContainerId,
+	private void persistMetadataContainer(long currentContainerId,
 			List<SegmentMetadata> currentMetadataContainer) {
 		System.out
 				.println("ContainerManager: Persist MetaData Container with containerId "
@@ -109,7 +109,7 @@ public class ContainerManager {
 				.put(currentContainerId, currentMetadataContainer);
 	}
 
-	private void persistSegmentIndex(String currentContainerId,
+	private void persistSegmentIndex(long currentContainerId,
 			List<SegmentMetadata> currentMetadataContainer) {
 
 		System.out

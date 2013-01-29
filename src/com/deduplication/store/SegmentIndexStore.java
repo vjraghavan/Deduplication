@@ -24,9 +24,9 @@ public class SegmentIndexStore {
 
 		@PrimaryKey
 		String key;
-		String containerId;
+		long containerId;
 
-		SegmentIdentifier(String key, String containerId) {
+		SegmentIdentifier(String key, long containerId) {
 			this.key = key;
 			this.containerId = containerId;
 		}
@@ -71,12 +71,12 @@ public class SegmentIndexStore {
 		dao = new SegmentIndexAccessor(store);
 	}
 
-	public void put(String hash, String containerId){
+	public void put(String hash, long containerId){
 		
 		dao.containerIdByHash.put(new SegmentIdentifier(hash, containerId));
 	}
 	
-	public String get(String hash){
+	public Long get(String hash){
 		
 		SegmentIdentifier result = dao.containerIdByHash.get(hash);
 		return (result == null ? null : result.containerId);

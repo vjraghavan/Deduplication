@@ -25,10 +25,10 @@ public class ContainerStore {
 	static class Container {
 
 		@PrimaryKey
-		String key;
+		Long key;
 		List<Byte> byteContentList;
 
-		public Container(String key, List<Byte> byteContentList) {
+		public Container(Long key, List<Byte> byteContentList) {
 			this.key = key;
 			this.byteContentList = byteContentList;
 		}
@@ -41,14 +41,14 @@ public class ContainerStore {
 	static class ContainerAccessor {
 
 		/* Person accessors */
-		PrimaryIndex<String, Container> containerByContainerId;
+		PrimaryIndex<Long, Container> containerByContainerId;
 
 		/* Opens all primary and secondary indices. */
 		public ContainerAccessor(EntityStore containerStore)
 				throws DatabaseException {
 
 			containerByContainerId = containerStore.getPrimaryIndex(
-					String.class, Container.class);
+					Long.class, Container.class);
 		}
 	}
 
@@ -74,12 +74,12 @@ public class ContainerStore {
 		containerStoreDao = new ContainerAccessor(containerStore);
 	}
 
-	public void put(String containerId, List<Byte> byteContentList ){
+	public void put(Long containerId, List<Byte> byteContentList ){
 		
 		containerStoreDao.containerByContainerId.put(new Container(containerId, byteContentList));
 	}
 	
-	public List<Byte> get(String containerId){
+	public List<Byte> get(Long containerId){
 		
 		Container result = containerStoreDao.containerByContainerId.get(containerId);
 		return (result == null ? null : result.byteContentList);

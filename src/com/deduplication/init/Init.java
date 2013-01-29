@@ -82,6 +82,8 @@ public class Init {
 
 		System.out.println(cache.get("data1"));
 
+		System.out.println(containerMetadataStore.get(new Long(1)));
+		System.out.println(containerMetadataStore.get(new Long(25)));
 		containerMetadataStore.close();
 		containerStore.close();
 		segmentIndexStore.close();

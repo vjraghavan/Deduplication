@@ -27,10 +27,10 @@ public class ContainerMetadataStore {
 	static class ContainerMetadata {
 
 		@PrimaryKey
-		String key;
+		Long key;
 		Metadata metadata;
 
-		public ContainerMetadata(String key, Metadata metadata) {
+		public ContainerMetadata(Long key, Metadata metadata) {
 			this.key = key;
 			this.metadata = metadata;
 		}
@@ -73,13 +73,13 @@ public class ContainerMetadataStore {
 	static class MetadataAccessor {
 
 		/* Person accessors */
-		PrimaryIndex<String, ContainerMetadata> metadataByContainerId;
+		PrimaryIndex<Long, ContainerMetadata> metadataByContainerId;
 
 		/* Opens all primary and secondary indices. */
 		public MetadataAccessor(EntityStore metadataStore)
 				throws DatabaseException {
 
-			metadataByContainerId = metadataStore.getPrimaryIndex(String.class,
+			metadataByContainerId = metadataStore.getPrimaryIndex(Long.class,
 					ContainerMetadata.class);
 		}
 	}
@@ -106,12 +106,12 @@ public class ContainerMetadataStore {
 		dao = new MetadataAccessor(metadataStore);
 	}
 
-	public void put(String containerId, List<SegmentMetadata> metadataContainer) {
+	public void put(Long containerId, List<SegmentMetadata> metadataContainer) {
 		dao.metadataByContainerId.put(new ContainerMetadata(containerId,
 				new Metadata(metadataContainer)));
 	}
 
-	public List<SegmentMetadata> get(String containerId) {
+	public List<SegmentMetadata> get(Long containerId) {
 		ContainerMetadata containerMetadata = dao.metadataByContainerId.get(containerId);
 		return (containerMetadata == null ? null : containerMetadata.metadata.metadataList);
 	}

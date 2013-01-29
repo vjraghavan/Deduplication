@@ -40,7 +40,7 @@ public class Writer {
 			System.out.println("Writer: BloomFilter positive");
 			// check segment Index and add it to container if not
 			// present in it.
-			String containerId = segmentIndexStore.get(hash);
+			Long containerId = segmentIndexStore.get(hash);
 			if (containerId == null) {
 				System.out.println("Writer: not in segment index");
 				containerManager.addIntoContainer(hash, data, dataLength);
