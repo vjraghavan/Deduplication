@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.deduplication.bloomfilter.BloomFilter;
+import com.deduplication.cache.ReadCache;
 import com.deduplication.cache.WriteCache;
 import com.deduplication.store.ContainerMetadataStore;
 import com.deduplication.store.SegmentIndexStore;
@@ -24,15 +25,17 @@ public class ContainerManager {
 	private ContainerStore containerStore;
 	private SegmentIndexStore segmentIndexStore;
 	private Set<String> currentContainerIndex;
-	private WriteCache cache;
+	private WriteCache writeCache;
+	private ReadCache readCache;
 	private BloomFilter<String> bloomFilter;
 
-	public ContainerManager(WriteCache cache,
+	public ContainerManager(WriteCache writeCache, ReadCache readCache,
 			ContainerMetadataStore containerMetadataStore,
 			ContainerStore containerStore, SegmentIndexStore segmentIndexStore,
 			BloomFilter<String> bloomFilter) {
 
-		this.cache = cache;
+		this.writeCache = writeCache;
+		this.readCache = readCache;
 		this.containerMetadataStore = containerMetadataStore;
 		this.containerStore = containerStore;
 		this.segmentIndexStore = segmentIndexStore;
@@ -88,7 +91,43 @@ public class ContainerManager {
 		Iterator<SegmentMetadata> iter = containerMetadataStore
 				.get(containerId).iterator();
 		while (iter.hasNext()) {
-			cache.set(iter.next().hash, containerId);
+			writeCache.set(iter.next().hash, containerId);
+		}
+	}
+
+	public void addContainerDataAndMetaIntoReadCache(Long containerId) {
+
+		Iterator<SegmentMetadata> iterMetadata = containerMetadataStore.get(
+				containerId).iterator();
+		List<Byte> containerBytes = containerStore.get(containerId);
+		Iterator<Byte> iterData = containerBytes.iterator();
+
+		while (iterMetadata.hasNext()) {
+			SegmentMetadata currentMetadata = iterMetadata.next();
+			byte[] currentData = new byte[currentMetadata.length];
+
+			for (int i = 0; i < currentMetadata.length; i++) {
+				currentData[i] = iterData.next();
+			}
+
+			readCache.set(currentMetadata.hash, currentData);
+		}
+	}
+
+	public void addCurrentContainerIntoReadCache() {
+
+		Iterator<SegmentMetadata> iterMetadata = currentMetadataContainer.iterator();
+		Iterator<Byte> iterData = currentDataContainer.iterator();
+		
+		while (iterMetadata.hasNext()) {
+			SegmentMetadata currentMetadata = iterMetadata.next();
+			byte[] currentData = new byte[currentMetadata.length];
+
+			for (int i = 0; i < currentMetadata.length; i++) {
+				currentData[i] = iterData.next();
+			}
+
+			readCache.set(currentMetadata.hash, currentData);
 		}
 	}
 

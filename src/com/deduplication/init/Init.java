@@ -10,6 +10,7 @@ import java.util.List;
 import net.spy.memcached.MemcachedClient;
 
 import com.deduplication.bloomfilter.BloomFilter;
+import com.deduplication.cache.ReadCache;
 import com.deduplication.cache.WriteCache;
 import com.deduplication.container.ContainerManager;
 import com.deduplication.store.ContainerMetadataStore;
@@ -25,6 +26,7 @@ public class Init {
 
 	private SegmentIndexStore segmentIndexStore;
 	private WriteCache writeCache;
+	private ReadCache readCache;
 	private BloomFilter bloomFilter;
 	private Writer writer;
 
@@ -32,13 +34,14 @@ public class Init {
 			ContainerMetadataStore containerMetadataStore,
 			ContainerManager containerManager,
 			SegmentIndexStore segmentIndexStore, WriteCache writeCache,
-			BloomFilter<String> bloomFilter, Writer writer) {
+			ReadCache readCache, BloomFilter<String> bloomFilter, Writer writer) {
 
 		this.containerStore = containerStore;
 		this.containerMetadataStore = containerMetadataStore;
 		this.containerManager = containerManager;
 		this.segmentIndexStore = segmentIndexStore;
 		this.writeCache = writeCache;
+		this.readCache = readCache;
 		this.bloomFilter = bloomFilter;
 		this.writer = writer;
 	}
@@ -52,11 +55,12 @@ public class Init {
 		SegmentIndexStore segmentIndexStore = new SegmentIndexStore(new File(
 				"/home/vijay/Archive/SegmentIndexStore"));
 		WriteCache writeCache = new WriteCache();
+		ReadCache readCache = new ReadCache();
 		BloomFilter<String> bloomFilter = new BloomFilter<String>(0.001,
 				Integer.MAX_VALUE);
 		ContainerManager containerManager = new ContainerManager(writeCache,
-				containerMetadataStore, containerStore, segmentIndexStore,
-				bloomFilter);
+				readCache, containerMetadataStore, containerStore,
+				segmentIndexStore, bloomFilter);
 		Writer writer = new Writer(writeCache, bloomFilter, segmentIndexStore,
 				containerManager);
 
@@ -88,13 +92,6 @@ public class Init {
 
 		System.out.println(containerMetadataStore.get(new Long(1)));
 		System.out.println(containerMetadataStore.get(new Long(25)));
-		
-		
-		MemcachedClient readCache = new MemcachedClient(
-			    new InetSocketAddress("localhost", 1122));
-		readCache.add("reader", 3600, "readCache");
-		System.out.println(readCache.get("reader"));
-		
 
 		containerMetadataStore.close();
 		containerStore.close();

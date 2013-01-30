@@ -20,7 +20,7 @@ public class ReadCache {
 		readCache.set(key, 3600, value);
 	}
 	
-	public Object get(String key){
-		return readCache.get(key);
+	public byte[] get(String key){
+		return (byte[])readCache.get(key);
 	}
 }

@@ -21,44 +21,45 @@ public class Reader {
 		this.containerManager = containerManager;
 	}
 
-	public void get(String hash) {
+	public byte[] get(String hash) {
 		
-		// check in cache
-		if (checkReadCache(hash)) {
-			System.out.println("Writer: cache hit");
-			return;
+		byte[] resultData = null;
+		// get from read cache
+		if ((resultData = getDataFromReadCache(hash)) != null) {
+			System.out.println("Reader: cache hit");
+			return resultData;
 		}
 
 		// check in current container Index
 		if (containerManager.isHashInCurrentContainer(hash)) {
-			System.out.println("Writer: hash in current container");
-			return;
+			System.out.println("Reader: hash in current container");
+			containerManager.addCurrentContainerIntoReadCache();
+			return readCache.get(hash);
 		}
 		
 		// check in bloom filter
 		if (checkBloomFilter(hash)) {
-			System.out.println("Writer: BloomFilter positive");
-			// check segment Index and add it to container if not
-			// present in it.
+			System.out.println("Reader: BloomFilter positive");
+			// check segment Index and add data and metadata into read cache
 			Long containerId = segmentIndexStore.get(hash);
 			if (containerId == null) {
-				System.out.println("Writer: not in segment index");
-		//		containerManager.addIntoContainer(hash, data, dataLength);
+				System.out.println("Reader: not in segment index");
+				return null;
 			} else {
-				System.out.println("Writer: in segment index");
-		//		containerManager.addContainerMetadataIntoCache(containerId);
-				return;
+				System.out.println("Reader: in segment index");
+				containerManager.addContainerDataAndMetaIntoReadCache(containerId);
+				return readCache.get(hash);
 			}
 
 		} else {
-			System.out.println("Writer: BloomFilter negative");
-		//	containerManager.addIntoContainer(hash, data, dataLength);
+			System.out.println("Reader: BloomFilter negative");
+		    return null;
 		}
 
 	}
 
-	private boolean checkReadCache(String hash) {
-		return (readCache.get(hash) != null ? true : false);
+	private byte[] getDataFromReadCache(String hash) {
+		return readCache.get(hash);
 	}
 
 	private boolean checkBloomFilter(String hash) {
