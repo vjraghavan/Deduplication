@@ -13,6 +13,7 @@ import com.deduplication.bloomfilter.BloomFilter;
 import com.deduplication.cache.ReadCache;
 import com.deduplication.cache.WriteCache;
 import com.deduplication.container.ContainerManager;
+import com.deduplication.read.Reader;
 import com.deduplication.store.ContainerMetadataStore;
 import com.deduplication.store.ContainerStore;
 import com.deduplication.store.SegmentIndexStore;
@@ -29,12 +30,14 @@ public class Init {
 	private ReadCache readCache;
 	private BloomFilter bloomFilter;
 	private Writer writer;
+	private Reader reader;
 
 	public Init(ContainerStore containerStore,
 			ContainerMetadataStore containerMetadataStore,
 			ContainerManager containerManager,
 			SegmentIndexStore segmentIndexStore, WriteCache writeCache,
-			ReadCache readCache, BloomFilter<String> bloomFilter, Writer writer) {
+			ReadCache readCache, BloomFilter<String> bloomFilter,
+			Writer writer, Reader reader) {
 
 		this.containerStore = containerStore;
 		this.containerMetadataStore = containerMetadataStore;
@@ -44,6 +47,7 @@ public class Init {
 		this.readCache = readCache;
 		this.bloomFilter = bloomFilter;
 		this.writer = writer;
+		this.reader = reader;
 	}
 
 	public static void main(String args[]) throws IOException {
@@ -63,6 +67,8 @@ public class Init {
 				segmentIndexStore, bloomFilter);
 		Writer writer = new Writer(writeCache, bloomFilter, segmentIndexStore,
 				containerManager);
+		Reader reader = new Reader(readCache, bloomFilter, segmentIndexStore,
+				containerManager);
 
 		byte[] data1 = new byte[3];
 		byte[] data2 = new byte[2];
@@ -78,21 +84,48 @@ public class Init {
 		for (int i = 0; i < data4.length; i++)
 			data4[i] = ((byte) i);
 
-		writer.put("data1", data1, data1.length);
-		writer.put("data2", data2, data2.length);
-		writer.put("data3", data3, data3.length);
-		writer.put("data4", data4, data4.length);
+		writer.put("data5", data1, data1.length);
+		writer.put("data6", data2, data2.length);
+		writer.put("data7", data3, data3.length);
+		writer.put("data8", data4, data4.length);
 
-		writer.put("data1", data1, data1.length);
-		writer.put("data2", data2, data2.length);
-		writer.put("data3", data3, data3.length);
-		writer.put("data4", data4, data4.length);
+		writer.put("data5", data1, data1.length);
+		writer.put("data6", data2, data2.length);
+		writer.put("data7", data3, data3.length);
+		writer.put("data8", data4, data4.length);
 
-		System.out.println(writeCache.get("data1"));
-
-		System.out.println(containerMetadataStore.get(new Long(1)));
-		System.out.println(containerMetadataStore.get(new Long(25)));
-
+		
+		byte[] data5 = reader.get("data5");
+		System.out.println("Data for the key data5");
+		for(byte b : data5){
+			System.out.print(b + " ");
+		}
+		
+		byte[] data6 = reader.get("data6");
+		System.out.println("Data for the key data6");
+		for(byte b : data6){
+			System.out.print(b + " ");
+		}
+		
+		byte[] data7 = reader.get("data7");
+		System.out.println("Data for the key data7");
+		for(byte b : data7){
+			System.out.print(b + " ");
+		}
+		
+		byte[] data8 = reader.get("data8");
+		System.out.println("Data for the key data8");
+		for(byte b : data8){
+			System.out.print(b + " ");
+		}
+		
+		byte[] data6s = reader.get("data6");
+		System.out.println("Again Data for the key data6");
+		for(byte b : data6s){
+			System.out.print(b + " ");
+		}
+		
+		
 		containerMetadataStore.close();
 		containerStore.close();
 		segmentIndexStore.close();
