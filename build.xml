@@ -24,8 +24,11 @@
   </target>
 
   <target name="run" description="runs deduplication" >
-        <java classname="com.deduplication.init.StorageManager" fork="true">
-        </java>
+        <java classname="com.deduplication.init.InputReceiver" fork="true">
+           <classpath>
+                    <pathelement location="dist/deduplication.jar"/>
+           </classpath>
+	</java>
   </target>
 
   <target name="clean" description="clean up" >
