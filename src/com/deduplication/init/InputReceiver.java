@@ -136,5 +136,10 @@ public class InputReceiver extends Thread {
 		bbuf.order(ByteOrder.BIG_ENDIAN);
 		return bbuf.getInt(0);
 	}
+	
+	public static void main(String args[]){
+		InputReceiver inputReceiver = new InputReceiver();
+		inputReceiver.run();
+	}
 
 }
