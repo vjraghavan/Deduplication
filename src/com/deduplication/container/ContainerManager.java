@@ -17,7 +17,7 @@ import com.deduplication.store.ContainerStore;
 
 public class ContainerManager {
 
-	public static final int CONTAINER_LENGTH = 4;
+	public static final int CONTAINER_LENGTH = 10485760;
 	private long currentContainerId;
 	private List<Byte> currentDataContainer;
 	private List<SegmentMetadata> currentMetadataContainer;
