@@ -18,7 +18,7 @@ public class InputReceiver extends Thread {
 	private ServerSocket service;
 
 	/** The PORT. */
-	private final int PORT = 12346;
+	private final int PORT = 12349;
 
 	/**
 	 * Instantiates a new input receiver.
@@ -43,8 +43,9 @@ public class InputReceiver extends Thread {
 			StorageManager storageManager = new StorageManager();
 
 			while (true) {
+				System.out.println("waiting for connection");
 				connection = service.accept();
-
+				
 				InputStream in = connection.getInputStream();
 
 				DataInputStream dis = new DataInputStream(in);
@@ -109,10 +110,12 @@ public class InputReceiver extends Thread {
 			}
 
 		} catch (Exception e) {
+			System.out.println("Exception thrown");
 			e.printStackTrace();
 		}
 
 		finally {
+			System.out.println("Inside Finally");
 			try {
 				connection.close();
 			} catch (IOException e) {
