@@ -27,6 +27,8 @@
         <java classname="com.deduplication.init.InputReceiver" fork="true">
            <classpath>
                     <pathelement location="dist/deduplication.jar"/>
+                    <pathelement location="/home/vijay/BDB/je-5.0.58/lib/je-5.0.58.jar"/>
+                    <pathelement location="/home/vijay/Memcached/spymemcached-2.8.4.jar"/>
            </classpath>
 	</java>
   </target>

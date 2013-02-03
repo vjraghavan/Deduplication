@@ -6,7 +6,6 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import net.spy.memcached.MemcachedClient;
 
 import com.deduplication.bloomfilter.BloomFilter;
@@ -33,6 +32,7 @@ public class StorageManager {
 	private Reader reader;
 
 	public StorageManager(){
+		try{
 		containerStore = new ContainerStore(new File(
 				"/home/vijay/Archive/ContainerStore"));
 		containerMetadataStore = new ContainerMetadataStore(
@@ -50,6 +50,9 @@ public class StorageManager {
 				containerManager);
 		reader = new Reader(readCache, bloomFilter, segmentIndexStore,
 				containerManager);
+		}catch(Exception e){
+			System.out.println(e);
+		}
 	}
 	
 	public StorageManager(ContainerStore containerStore,
