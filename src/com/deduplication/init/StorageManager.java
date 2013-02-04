@@ -17,6 +17,7 @@ import com.deduplication.read.Reader;
 import com.deduplication.store.ContainerMetadataStore;
 import com.deduplication.store.ContainerMetadataStore.SegmentMetadata;
 import com.deduplication.store.ContainerStore;
+import com.deduplication.store.FileContainerStore;
 import com.deduplication.store.SegmentIndexStore;
 import com.deduplication.write.Writer;
 import com.sleepycat.je.EnvironmentConfig;
@@ -24,6 +25,7 @@ import com.sleepycat.je.EnvironmentConfig;
 public class StorageManager {
 
 	private EnvironmentConfig envConfig;
+	private FileContainerStore fileContainerStore;
 	private ContainerStore containerStore;
 	private ContainerMetadataStore containerMetadataStore;
 	private ContainerManager containerManager;
@@ -44,6 +46,9 @@ public class StorageManager {
 		envConfig.setCachePercentVoid(75);
 		envConfig.setTxnNoSyncVoid(true);
 		
+		fileContainerStore = new FileContainerStore(
+				"/home/vijay/Archive/FileContainerStore/");
+		
 		containerStore = new ContainerStore(new File(
 				"/home/vijay/Archive/ContainerStore"), envConfig);
 		containerMetadataStore = new ContainerMetadataStore(
@@ -56,7 +61,7 @@ public class StorageManager {
 				Integer.MAX_VALUE);
 		containerManager = new ContainerManager(writeCache,
 				readCache, containerMetadataStore, containerStore,
-				segmentIndexStore, bloomFilter);
+				segmentIndexStore, bloomFilter, false, fileContainerStore);
 		writer = new Writer(writeCache, bloomFilter, segmentIndexStore,
 				containerManager);
 		reader = new Reader(readCache, bloomFilter, segmentIndexStore,
@@ -115,7 +120,7 @@ public class StorageManager {
 				Integer.MAX_VALUE);
 		ContainerManager containerManager = new ContainerManager(writeCache,
 				readCache, containerMetadataStore, containerStore,
-				segmentIndexStore, bloomFilter);
+				segmentIndexStore, bloomFilter, false, null);
 		Writer writer = new Writer(writeCache, bloomFilter, segmentIndexStore,
 				containerManager);
 		Reader reader = new Reader(readCache, bloomFilter, segmentIndexStore,

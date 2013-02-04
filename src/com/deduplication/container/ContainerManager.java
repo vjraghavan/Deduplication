@@ -5,12 +5,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import com.deduplication.bloomfilter.BloomFilter;
 import com.deduplication.cache.ReadCache;
 import com.deduplication.cache.WriteCache;
 import com.deduplication.store.ContainerMetadataStore;
+import com.deduplication.store.FileContainerStore;
 import com.deduplication.store.SegmentIndexStore;
 import com.deduplication.store.ContainerMetadataStore.SegmentMetadata;
 import com.deduplication.store.ContainerStore;
@@ -28,11 +28,14 @@ public class ContainerManager {
 	private WriteCache writeCache;
 	private ReadCache readCache;
 	private BloomFilter<String> bloomFilter;
+	private FileContainerStore fileContainerStore;
+	private boolean isFileContainerStore;
 
 	public ContainerManager(WriteCache writeCache, ReadCache readCache,
 			ContainerMetadataStore containerMetadataStore,
 			ContainerStore containerStore, SegmentIndexStore segmentIndexStore,
-			BloomFilter<String> bloomFilter) {
+			BloomFilter<String> bloomFilter, boolean isFileContainerStore,
+			FileContainerStore fileContainerStore) {
 
 		this.writeCache = writeCache;
 		this.readCache = readCache;
@@ -40,6 +43,8 @@ public class ContainerManager {
 		this.containerStore = containerStore;
 		this.segmentIndexStore = segmentIndexStore;
 		this.bloomFilter = bloomFilter;
+		this.isFileContainerStore = isFileContainerStore;
+		this.fileContainerStore = fileContainerStore;
 
 		currentContainerId = 1;
 		currentDataContainer = new ArrayList<Byte>();
@@ -68,10 +73,11 @@ public class ContainerManager {
 			persistSegmentIndex(currentContainerId, currentMetadataContainer);
 
 			currentContainerId++;
-			/*currentDataContainer = new ArrayList<Byte>();
-			currentMetadataContainer = new ArrayList<SegmentMetadata>();
-			currentContainerIndex = new HashSet<String>();
-*/
+			/*
+			 * currentDataContainer = new ArrayList<Byte>();
+			 * currentMetadataContainer = new ArrayList<SegmentMetadata>();
+			 * currentContainerIndex = new HashSet<String>();
+			 */
 			currentDataContainer.clear();
 			currentMetadataContainer.clear();
 			currentContainerIndex.clear();
@@ -102,7 +108,12 @@ public class ContainerManager {
 
 		Iterator<SegmentMetadata> iterMetadata = containerMetadataStore.get(
 				containerId).iterator();
-		List<Byte> containerBytes = containerStore.get(containerId);
+		List<Byte> containerBytes;
+		if (isFileContainerStore) {
+			containerBytes = fileContainerStore.get(containerId);
+		} else {
+			containerBytes = containerStore.get(containerId);
+		}
 		Iterator<Byte> iterData = containerBytes.iterator();
 
 		while (iterMetadata.hasNext()) {
@@ -119,9 +130,10 @@ public class ContainerManager {
 
 	public void addCurrentContainerIntoReadCache() {
 
-		Iterator<SegmentMetadata> iterMetadata = currentMetadataContainer.iterator();
+		Iterator<SegmentMetadata> iterMetadata = currentMetadataContainer
+				.iterator();
 		Iterator<Byte> iterData = currentDataContainer.iterator();
-		
+
 		while (iterMetadata.hasNext()) {
 			SegmentMetadata currentMetadata = iterMetadata.next();
 			byte[] currentData = new byte[currentMetadata.length];
@@ -139,13 +151,17 @@ public class ContainerManager {
 		System.out
 				.println("ContainerManager: Persist Data Container with containerId "
 						+ containerId);
-		try{
-			containerStore.put(containerId, byteContentList);
+		try {
+			if (isFileContainerStore) {
+				fileContainerStore.put(containerId, byteContentList);
+			} else {
+				containerStore.put(containerId, byteContentList);
+			}
 			System.out.println("Persisted container successfully");
-		}catch(Exception e){
+		} catch (Exception e) {
 			System.out.println(e);
 		}
-		
+
 	}
 
 	private void persistMetadataContainer(long currentContainerId,
