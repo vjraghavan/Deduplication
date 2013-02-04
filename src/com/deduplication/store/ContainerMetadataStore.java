@@ -88,12 +88,9 @@ public class ContainerMetadataStore {
 	private EntityStore metadataStore;
 	private MetadataAccessor dao;
 
-	public ContainerMetadataStore(File envHome) throws DatabaseException {
+	public ContainerMetadataStore(File envHome, EnvironmentConfig envConfig) throws DatabaseException {
 
 		/* Open a transactional Berkeley DB engine environment. */
-		EnvironmentConfig envConfig = new EnvironmentConfig();
-		envConfig.setAllowCreate(true);
-		envConfig.setTransactional(true);
 		env = new Environment(envHome, envConfig);
 
 		/* Open a transactional entity store. */
@@ -124,8 +121,8 @@ public class ContainerMetadataStore {
 
 	public static void main(String[] args) throws DatabaseException {
 
-		ContainerMetadataStore putGet = new ContainerMetadataStore(new File(
+	/*	ContainerMetadataStore putGet = new ContainerMetadataStore(new File(
 				"/home/vijay/containerDB"));
-		putGet.close();
+		putGet.close();*/
 	}
 }

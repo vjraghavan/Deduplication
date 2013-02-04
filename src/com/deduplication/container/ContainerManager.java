@@ -17,7 +17,7 @@ import com.deduplication.store.ContainerStore;
 
 public class ContainerManager {
 
-	public static final int CONTAINER_LENGTH = 10485760;
+	public static final int CONTAINER_LENGTH = 4;//104857600;
 	private long currentContainerId;
 	private List<Byte> currentDataContainer;
 	private List<SegmentMetadata> currentMetadataContainer;
@@ -68,10 +68,13 @@ public class ContainerManager {
 			persistSegmentIndex(currentContainerId, currentMetadataContainer);
 
 			currentContainerId++;
-			currentDataContainer = new ArrayList<Byte>();
+			/*currentDataContainer = new ArrayList<Byte>();
 			currentMetadataContainer = new ArrayList<SegmentMetadata>();
 			currentContainerIndex = new HashSet<String>();
-
+*/
+			currentDataContainer.clear();
+			currentMetadataContainer.clear();
+			currentContainerIndex.clear();
 			currentMetadataContainer.add(new SegmentMetadata(hash,
 					currentDataContainer.size(), dataLength));
 			currentContainerIndex.add(hash);
@@ -136,7 +139,13 @@ public class ContainerManager {
 		System.out
 				.println("ContainerManager: Persist Data Container with containerId "
 						+ containerId);
-		containerStore.put(containerId, byteContentList);
+		try{
+			containerStore.put(containerId, byteContentList);
+			System.out.println("Persisted container successfully");
+		}catch(Exception e){
+			System.out.println(e);
+		}
+		
 	}
 
 	private void persistMetadataContainer(long currentContainerId,

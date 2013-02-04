@@ -2,6 +2,7 @@ package com.deduplication.init;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,12 +15,15 @@ import com.deduplication.cache.WriteCache;
 import com.deduplication.container.ContainerManager;
 import com.deduplication.read.Reader;
 import com.deduplication.store.ContainerMetadataStore;
+import com.deduplication.store.ContainerMetadataStore.SegmentMetadata;
 import com.deduplication.store.ContainerStore;
 import com.deduplication.store.SegmentIndexStore;
 import com.deduplication.write.Writer;
+import com.sleepycat.je.EnvironmentConfig;
 
 public class StorageManager {
 
+	private EnvironmentConfig envConfig;
 	private ContainerStore containerStore;
 	private ContainerMetadataStore containerMetadataStore;
 	private ContainerManager containerManager;
@@ -33,12 +37,19 @@ public class StorageManager {
 
 	public StorageManager(){
 		try{
+		envConfig = new EnvironmentConfig();
+		envConfig.setAllowCreate(true);
+		envConfig.setTransactional(true);
+		envConfig.setSharedCacheVoid(true);
+		envConfig.setCachePercentVoid(75);
+		envConfig.setTxnNoSyncVoid(true);
+		
 		containerStore = new ContainerStore(new File(
-				"/home/vijay/Archive/ContainerStore"));
+				"/home/vijay/Archive/ContainerStore"), envConfig);
 		containerMetadataStore = new ContainerMetadataStore(
-				new File("/home/vijay/Archive/ContainerMetadataStore"));
+				new File("/home/vijay/Archive/ContainerMetadataStore"), envConfig);
 		segmentIndexStore = new SegmentIndexStore(new File(
-				"/home/vijay/Archive/SegmentIndexStore"));
+				"/home/vijay/Archive/SegmentIndexStore"), envConfig);
 		writeCache = new WriteCache();
 		readCache = new ReadCache();
 		bloomFilter = new BloomFilter<String>(0.001,
@@ -73,8 +84,20 @@ public class StorageManager {
 		this.reader = reader;
 	}
 
-	public void put(byte[] hash, byte[] data){
-		String strHash = new String(hash);
+	public void put(byte[] hash, byte[] data) throws UnsupportedEncodingException{
+		String strHash = new String(hash, "UTF-8");
+		if(strHash.contains(" ")){
+			System.out.println("Contains space");
+		}
+		if(strHash.contains("\n")){
+			System.out.println("Contains backslash n");
+		}
+		if(strHash.contains("\r")){
+			System.out.println("Contains backslash r");
+		}
+		if(strHash.contains("0")){
+			System.out.println("Contains 0");
+		}
 		writer.put(strHash, data, data.length);
 	}
 	
@@ -85,12 +108,19 @@ public class StorageManager {
 	
 	public static void main(String args[]) throws IOException {
 
+		EnvironmentConfig envConfig = new EnvironmentConfig();
+		envConfig.setAllowCreate(true);
+		envConfig.setTransactional(true);
+		envConfig.setSharedCacheVoid(true);
+		envConfig.setCachePercentVoid(75);
+		envConfig.setTxnNoSyncVoid(true);
+		
 		ContainerStore containerStore = new ContainerStore(new File(
-				"/home/vijay/Archive/ContainerStore"));
+				"/home/vijay/Archive/ContainerStore"), envConfig);
 		ContainerMetadataStore containerMetadataStore = new ContainerMetadataStore(
-				new File("/home/vijay/Archive/ContainerMetadataStore"));
+				new File("/home/vijay/Archive/ContainerMetadataStore"), envConfig);
 		SegmentIndexStore segmentIndexStore = new SegmentIndexStore(new File(
-				"/home/vijay/Archive/SegmentIndexStore"));
+				"/home/vijay/Archive/SegmentIndexStore"), envConfig);
 		WriteCache writeCache = new WriteCache();
 		ReadCache readCache = new ReadCache();
 		BloomFilter<String> bloomFilter = new BloomFilter<String>(0.001,
@@ -103,6 +133,7 @@ public class StorageManager {
 		Reader reader = new Reader(readCache, bloomFilter, segmentIndexStore,
 				containerManager);
 
+		/*
 		byte[] data1 = new byte[3];
 		byte[] data2 = new byte[2];
 		byte[] data3 = new byte[1];
@@ -158,9 +189,33 @@ public class StorageManager {
 			System.out.print(b + " ");
 		}
 		
+		*/
 		
+		List<SegmentMetadata> list = containerMetadataStore.get(new Long(1));
+		Iterator<SegmentMetadata> iter = list.iterator();
+		while(iter.hasNext()){
+			SegmentMetadata seg = iter.next();
+			System.out.println(seg.hash + " " + seg.length + " " + seg.offset);
+			segmentIndexStore.put(seg.hash, 1);
+		}
 		containerMetadataStore.close();
 		containerStore.close();
 		segmentIndexStore.close();
 	}
+	
+	private static String convertToHex(byte[] data) {
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < data.length; i++) {
+            int halfbyte = (data[i] >>> 4) & 0x0F;
+            int two_halfs = 0;
+            do {
+                if ((0 <= halfbyte) && (halfbyte <= 9))
+                    buf.append((char) ('0' + halfbyte));
+                else
+                    buf.append((char) ('a' + (halfbyte - 10)));
+                halfbyte = data[i] & 0x0F;
+            } while (two_halfs++ < 1);
+        }
+        return buf.toString();
+    }
 }

@@ -44,6 +44,7 @@ public class Writer {
 			if (containerId == null) {
 				System.out.println("Writer: not in segment index");
 				containerManager.addIntoContainer(hash, data, dataLength);
+				return;
 			} else {
 				System.out.println("Writer: in segment index");
 				containerManager.addContainerMetadataIntoCache(containerId);
@@ -53,6 +54,7 @@ public class Writer {
 		} else {
 			System.out.println("Writer: BloomFilter negative");
 			containerManager.addIntoContainer(hash, data, dataLength);
+			return;
 		}
 
 	}

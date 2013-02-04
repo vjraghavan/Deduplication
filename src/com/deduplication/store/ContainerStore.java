@@ -8,6 +8,7 @@ package com.deduplication.store;
 
 import java.io.File;
 import java.util.List;
+import java.util.logging.Handler;
 
 import com.sleepycat.je.DatabaseException;
 import com.sleepycat.je.Environment;
@@ -56,12 +57,12 @@ public class ContainerStore {
 	private EntityStore containerStore;
 	private ContainerAccessor containerStoreDao;
 
-	public ContainerStore(File envHome) throws DatabaseException {
+	public ContainerStore(File envHome, EnvironmentConfig envConfig) throws DatabaseException {
 
 		/* Open a transactional Berkeley DB engine environment. */
-		EnvironmentConfig envConfig = new EnvironmentConfig();
-		envConfig.setAllowCreate(true);
-		envConfig.setTransactional(true);
+		//EnvironmentConfig envConfig = new EnvironmentConfig();
+		//envConfig.setAllowCreate(true);
+		//envConfig.setTransactional(true);
 		env = new Environment(envHome, envConfig);
 
 		/* Open a transactional entity store. */
@@ -93,8 +94,8 @@ public class ContainerStore {
 
 	public static void main(String[] args) throws DatabaseException {
 
-		ContainerStore putGet = new ContainerStore(new File(
+	/*	ContainerStore putGet = new ContainerStore(new File(
 				"/home/vijay/containerDb"));
-		putGet.close();
+		putGet.close();*/
 	}
 }

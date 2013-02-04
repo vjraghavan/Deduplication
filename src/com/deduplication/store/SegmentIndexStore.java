@@ -53,12 +53,9 @@ public class SegmentIndexStore {
 	private EntityStore store;
 	private SegmentIndexAccessor dao;
 
-	public SegmentIndexStore(File envHome) throws DatabaseException {
+	public SegmentIndexStore(File envHome, EnvironmentConfig envConfig) throws DatabaseException {
 
 		/* Open a transactional Berkeley DB engine environment. */
-		EnvironmentConfig envConfig = new EnvironmentConfig();
-		envConfig.setAllowCreate(true);
-		envConfig.setTransactional(true);
 		env = new Environment(envHome, envConfig);
 
 		/* Open a transactional entity store. */
@@ -90,7 +87,7 @@ public class SegmentIndexStore {
 
 	public static void main(String[] args) throws DatabaseException {
 
-		SegmentIndexStore putGet = new SegmentIndexStore(new File("/home/vijay/testDb"));
-		putGet.close();
+		/*SegmentIndexStore putGet = new SegmentIndexStore(new File("/home/vijay/testDb"));
+		putGet.close();*/
 	}
 }
