@@ -25,7 +25,8 @@
 
   <target name="run" description="runs deduplication" >
         <java classname="com.deduplication.init.InputReceiver" fork="true">
-           <classpath>
+           <jvmarg value="-Xmx5120"/>
+	   <classpath>
                     <pathelement location="dist/deduplication.jar"/>
                     <pathelement location="/home/vijay/BDB/je-5.0.58/lib/je-5.0.58.jar"/>
                     <pathelement location="/home/vijay/Memcached/spymemcached-2.8.4.jar"/>
