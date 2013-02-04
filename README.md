@@ -38,3 +38,5 @@ Installation Instructions
 
    CLASSPATH:
    export CLASSPATH=/home/vijay/Memcached/spymemcached-2.8.4.jar:/home/vijay/BDB/je-5.0.58/lib/je-5.0.58.jar:/home/vijay/java/jdk1.7.0_11/lib/tools.jar
+
+   ssh -X -l vijay 128.111.46.221
