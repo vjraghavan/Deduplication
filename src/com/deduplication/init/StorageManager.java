@@ -85,19 +85,7 @@ public class StorageManager {
 	}
 
 	public void put(byte[] hash, byte[] data) throws UnsupportedEncodingException{
-		String strHash = new String(hash, "UTF-8");
-		if(strHash.contains(" ")){
-			System.out.println("Contains space");
-		}
-		if(strHash.contains("\n")){
-			System.out.println("Contains backslash n");
-		}
-		if(strHash.contains("\r")){
-			System.out.println("Contains backslash r");
-		}
-		if(strHash.contains("0")){
-			System.out.println("Contains 0");
-		}
+		String strHash = convertToHex(hash);
 		writer.put(strHash, data, data.length);
 	}
 	
