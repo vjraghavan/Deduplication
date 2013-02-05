@@ -19,6 +19,11 @@ public class InputReceiver extends Thread {
 
 	/** The PORT. */
 	private final int PORT = 12349;
+	private long resultWriteTime = 0;
+	private long startWriteTime = 0;
+	private long endWriteTime = 0;
+	private long totalDataLength = 0; 
+	 
 
 	/**
 	 * Instantiates a new input receiver.
@@ -94,19 +99,26 @@ public class InputReceiver extends Thread {
 
 					dataLength = bytesToRead - offset;
 					System.out.println("dataLength " + dataLength);
-
+					
+					totalDataLength += dataLength;
+					
 					if (operation == 0) { // put operation
 						data = new byte[dataLength];
 						for (int i = 0; i < data.length; i++) {
 							data[i] = buffer[offset++];
 						}
+						startWriteTime = System.currentTimeMillis();
 						storageManager.put(hash, data);
+						endWriteTime = System.currentTimeMillis();
+						resultWriteTime += (endWriteTime - startWriteTime);
 					}
 
 					else if (operation == 1) { // get operation
 						storageManager.get(hash);
 					}
 				}
+				System.out.println("Data Length Received :" + totalDataLength);
+				System.out.println("Time taken for writing :" + resultWriteTime);
 			}
 
 		} catch (Exception e) {
