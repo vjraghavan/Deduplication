@@ -64,7 +64,7 @@ public class StorageManager {
 			bloomFilter = new BloomFilter<String>(0.001, Integer.MAX_VALUE);
 			containerManager = new ContainerManager(writeCache, readCache,
 					containerMetadataStore, containerStore, segmentIndexStore,
-					bloomFilter, false, fileContainerStore);
+					bloomFilter, isFileContainerStore, fileContainerStore);
 			writer = new Writer(writeCache, bloomFilter, segmentIndexStore,
 					containerManager);
 			reader = new Reader(readCache, bloomFilter, segmentIndexStore,
