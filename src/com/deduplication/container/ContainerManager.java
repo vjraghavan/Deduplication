@@ -82,7 +82,8 @@ public class ContainerManager {
 			currentContainerIndex.add(hash);
 			for (byte eachByte : data) {
 				currentDataContainer[currentContainerSize] = eachByte;
-				currentContainerSize++;			}
+				currentContainerSize++;
+			}
 		}
 
 	}
@@ -110,7 +111,7 @@ public class ContainerManager {
 		} else {
 			containerBytes = containerStore.get(containerId);
 		}
-		
+
 		int iterIndex = 0;
 
 		while (iterMetadata.hasNext()) {
@@ -145,8 +146,7 @@ public class ContainerManager {
 		}
 	}
 
-	private void persistDataContainer(long containerId,
-			byte[] byteContentList) {
+	private void persistDataContainer(long containerId, byte[] byteContentList) {
 		System.out
 				.println("ContainerManager: Persist Data Container with containerId "
 						+ containerId);

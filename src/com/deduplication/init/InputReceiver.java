@@ -45,7 +45,7 @@ public class InputReceiver extends Thread {
 			while (true) {
 				System.out.println("waiting for connection");
 				connection = service.accept();
-				
+
 				InputStream in = connection.getInputStream();
 
 				DataInputStream dis = new DataInputStream(in);
@@ -139,8 +139,8 @@ public class InputReceiver extends Thread {
 		bbuf.order(ByteOrder.BIG_ENDIAN);
 		return bbuf.getInt(0);
 	}
-	
-	public static void main(String args[]){
+
+	public static void main(String args[]) {
 		InputReceiver inputReceiver = new InputReceiver();
 		inputReceiver.run();
 	}

@@ -1,4 +1,5 @@
 package com.deduplication.store;
+
 /*-
  * See the file LICENSE for redistribution information.
  *
@@ -53,7 +54,8 @@ public class SegmentIndexStore {
 	private EntityStore store;
 	private SegmentIndexAccessor dao;
 
-	public SegmentIndexStore(File envHome, EnvironmentConfig envConfig) throws DatabaseException {
+	public SegmentIndexStore(File envHome, EnvironmentConfig envConfig)
+			throws DatabaseException {
 
 		/* Open a transactional Berkeley DB engine environment. */
 		env = new Environment(envHome, envConfig);
@@ -68,13 +70,13 @@ public class SegmentIndexStore {
 		dao = new SegmentIndexAccessor(store);
 	}
 
-	public void put(String hash, long containerId){
-		
+	public void put(String hash, long containerId) {
+
 		dao.containerIdByHash.put(new SegmentIdentifier(hash, containerId));
 	}
-	
-	public Long get(String hash){
-		
+
+	public Long get(String hash) {
+
 		SegmentIdentifier result = dao.containerIdByHash.get(hash);
 		return (result == null ? null : result.containerId);
 	}
@@ -87,7 +89,9 @@ public class SegmentIndexStore {
 
 	public static void main(String[] args) throws DatabaseException {
 
-		/*SegmentIndexStore putGet = new SegmentIndexStore(new File("/home/vijay/testDb"));
-		putGet.close();*/
+		/*
+		 * SegmentIndexStore putGet = new SegmentIndexStore(new
+		 * File("/home/vijay/testDb")); putGet.close();
+		 */
 	}
 }

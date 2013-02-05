@@ -11,7 +11,7 @@ public class Writer {
 	private BloomFilter<String> bloomFilter;
 	private SegmentIndexStore segmentIndexStore;
 	private ContainerManager containerManager;
-	
+
 	public Writer(WriteCache writeCache, BloomFilter<String> bloomFilter,
 			SegmentIndexStore segmentIndexStore,
 			ContainerManager containerManager) {
@@ -22,7 +22,7 @@ public class Writer {
 	}
 
 	public void put(String hash, byte[] data, int dataLength) {
-		
+
 		// check in cache
 		if (checkWriteCache(hash)) {
 			System.out.println("Writer: cache hit");
@@ -34,7 +34,7 @@ public class Writer {
 			System.out.println("Writer: hash in current container");
 			return;
 		}
-		
+
 		// check in bloom filter
 		if (checkBloomFilter(hash)) {
 			System.out.println("Writer: BloomFilter positive");

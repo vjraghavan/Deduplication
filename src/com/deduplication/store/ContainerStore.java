@@ -1,4 +1,5 @@
 package com.deduplication.store;
+
 /*-
  * See the file LICENSE for redistribution information.
  *
@@ -46,8 +47,8 @@ public class ContainerStore {
 		public ContainerAccessor(EntityStore containerStore)
 				throws DatabaseException {
 
-			containerByContainerId = containerStore.getPrimaryIndex(
-					Long.class, Container.class);
+			containerByContainerId = containerStore.getPrimaryIndex(Long.class,
+					Container.class);
 		}
 	}
 
@@ -55,12 +56,13 @@ public class ContainerStore {
 	private EntityStore containerStore;
 	private ContainerAccessor containerStoreDao;
 
-	public ContainerStore(File envHome, EnvironmentConfig envConfig) throws DatabaseException {
+	public ContainerStore(File envHome, EnvironmentConfig envConfig)
+			throws DatabaseException {
 
 		/* Open a transactional Berkeley DB engine environment. */
-		//EnvironmentConfig envConfig = new EnvironmentConfig();
-		//envConfig.setAllowCreate(true);
-		//envConfig.setTransactional(true);
+		// EnvironmentConfig envConfig = new EnvironmentConfig();
+		// envConfig.setAllowCreate(true);
+		// envConfig.setTransactional(true);
 		env = new Environment(envHome, envConfig);
 
 		/* Open a transactional entity store. */
@@ -73,17 +75,19 @@ public class ContainerStore {
 		containerStoreDao = new ContainerAccessor(containerStore);
 	}
 
-	public void put(Long containerId, byte[] byteContent ){
-		
-		containerStoreDao.containerByContainerId.put(new Container(containerId, byteContent));
+	public void put(Long containerId, byte[] byteContent) {
+
+		containerStoreDao.containerByContainerId.put(new Container(containerId,
+				byteContent));
 	}
-	
-	public byte[] get(Long containerId){
-		
-		Container result = containerStoreDao.containerByContainerId.get(containerId);
+
+	public byte[] get(Long containerId) {
+
+		Container result = containerStoreDao.containerByContainerId
+				.get(containerId);
 		return (result == null ? null : result.byteContent);
 	}
-	
+
 	public void close() throws DatabaseException {
 
 		containerStore.close();
@@ -92,8 +96,9 @@ public class ContainerStore {
 
 	public static void main(String[] args) throws DatabaseException {
 
-	/*	ContainerStore putGet = new ContainerStore(new File(
-				"/home/vijay/containerDb"));
-		putGet.close();*/
+		/*
+		 * ContainerStore putGet = new ContainerStore(new File(
+		 * "/home/vijay/containerDb")); putGet.close();
+		 */
 	}
 }

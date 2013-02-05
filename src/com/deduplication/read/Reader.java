@@ -11,7 +11,7 @@ public class Reader {
 	private BloomFilter<String> bloomFilter;
 	private SegmentIndexStore segmentIndexStore;
 	private ContainerManager containerManager;
-	
+
 	public Reader(ReadCache readCache, BloomFilter<String> bloomFilter,
 			SegmentIndexStore segmentIndexStore,
 			ContainerManager containerManager) {
@@ -22,7 +22,7 @@ public class Reader {
 	}
 
 	public byte[] get(String hash) {
-		
+
 		byte[] resultData = null;
 		// get from read cache
 		if ((resultData = getDataFromReadCache(hash)) != null) {
@@ -36,7 +36,7 @@ public class Reader {
 			containerManager.addCurrentContainerIntoReadCache();
 			return readCache.get(hash);
 		}
-		
+
 		// check in bloom filter
 		if (checkBloomFilter(hash)) {
 			System.out.println("Reader: BloomFilter positive");
@@ -47,13 +47,14 @@ public class Reader {
 				return null;
 			} else {
 				System.out.println("Reader: in segment index");
-				containerManager.addContainerDataAndMetaIntoReadCache(containerId);
+				containerManager
+						.addContainerDataAndMetaIntoReadCache(containerId);
 				return readCache.get(hash);
 			}
 
 		} else {
 			System.out.println("Reader: BloomFilter negative");
-		    return null;
+			return null;
 		}
 
 	}

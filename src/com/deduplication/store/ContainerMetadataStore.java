@@ -86,7 +86,8 @@ public class ContainerMetadataStore {
 	private EntityStore metadataStore;
 	private MetadataAccessor dao;
 
-	public ContainerMetadataStore(File envHome, EnvironmentConfig envConfig) throws DatabaseException {
+	public ContainerMetadataStore(File envHome, EnvironmentConfig envConfig)
+			throws DatabaseException {
 
 		/* Open a transactional Berkeley DB engine environment. */
 		env = new Environment(envHome, envConfig);
@@ -107,8 +108,10 @@ public class ContainerMetadataStore {
 	}
 
 	public List<SegmentMetadata> get(Long containerId) {
-		ContainerMetadata containerMetadata = dao.metadataByContainerId.get(containerId);
-		return (containerMetadata == null ? null : containerMetadata.metadata.metadataList);
+		ContainerMetadata containerMetadata = dao.metadataByContainerId
+				.get(containerId);
+		return (containerMetadata == null ? null
+				: containerMetadata.metadata.metadataList);
 	}
 
 	public void close() throws DatabaseException {
@@ -119,8 +122,9 @@ public class ContainerMetadataStore {
 
 	public static void main(String[] args) throws DatabaseException {
 
-	/*	ContainerMetadataStore putGet = new ContainerMetadataStore(new File(
-				"/home/vijay/containerDB"));
-		putGet.close();*/
+		/*
+		 * ContainerMetadataStore putGet = new ContainerMetadataStore(new File(
+		 * "/home/vijay/containerDB")); putGet.close();
+		 */
 	}
 }
