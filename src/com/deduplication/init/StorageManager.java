@@ -36,14 +36,18 @@ public class StorageManager {
 	private BloomFilter<String> bloomFilter;
 	private Writer writer;
 	private Reader reader;
+	private boolean isFileContainerStore;
 
 	public StorageManager(){
 		try{
+		isFileContainerStore = false;
 		envConfig = new EnvironmentConfig();
 		envConfig.setAllowCreate(true);
 		envConfig.setTransactional(true);
 		envConfig.setSharedCacheVoid(true);
-		envConfig.setCachePercentVoid(75);
+		if( !isFileContainerStore){
+			envConfig.setCachePercentVoid(75);
+		}
 		envConfig.setTxnNoSyncVoid(true);
 		
 		fileContainerStore = new FileContainerStore(
@@ -188,7 +192,7 @@ public class StorageManager {
 		Iterator<SegmentMetadata> iter = list.iterator();
 		while(iter.hasNext()){
 			SegmentMetadata seg = iter.next();
-			System.out.println(seg.hash + " " + seg.length + " " + seg.offset);
+			System.out.println(seg.hash + " " + seg.length);
 			segmentIndexStore.put(seg.hash, 1);
 		}
 		containerMetadataStore.close();

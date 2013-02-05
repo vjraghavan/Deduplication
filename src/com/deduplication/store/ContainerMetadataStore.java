@@ -56,12 +56,10 @@ public class ContainerMetadataStore {
 	public static class SegmentMetadata {
 
 		public String hash;
-		public long offset;
 		public int length;
 
-		public SegmentMetadata(String hash, long offset, int length) {
+		public SegmentMetadata(String hash, int length) {
 			this.hash = hash;
-			this.offset = offset;
 			this.length = length;
 		}
 

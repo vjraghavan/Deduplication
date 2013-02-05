@@ -19,7 +19,7 @@ public class ContainerManager {
 
 	public static final int CONTAINER_LENGTH = 104857600;
 	private long currentContainerId;
-	private List<Byte> currentDataContainer;
+	private byte[] currentDataContainer;
 	private List<SegmentMetadata> currentMetadataContainer;
 	private ContainerMetadataStore containerMetadataStore;
 	private ContainerStore containerStore;
@@ -30,6 +30,7 @@ public class ContainerManager {
 	private BloomFilter<String> bloomFilter;
 	private FileContainerStore fileContainerStore;
 	private boolean isFileContainerStore;
+	private int currentContainerSize;
 
 	public ContainerManager(WriteCache writeCache, ReadCache readCache,
 			ContainerMetadataStore containerMetadataStore,
@@ -47,7 +48,8 @@ public class ContainerManager {
 		this.fileContainerStore = fileContainerStore;
 
 		currentContainerId = 1;
-		currentDataContainer = new ArrayList<Byte>();
+		currentContainerSize = 0;
+		currentDataContainer = new byte[CONTAINER_LENGTH];
 		currentMetadataContainer = new ArrayList<SegmentMetadata>();
 		currentContainerIndex = new HashSet<String>();
 	}
@@ -55,14 +57,14 @@ public class ContainerManager {
 	public void addIntoContainer(String hash, byte[] data, int dataLength) {
 
 		System.out.println("ContainerManager: Add into container");
-		if (currentDataContainer.size() + dataLength < CONTAINER_LENGTH) {
+		if (currentContainerSize + dataLength <= CONTAINER_LENGTH) {
 
 			System.out.println("ContainerManager: Add into current container");
-			currentMetadataContainer.add(new SegmentMetadata(hash,
-					currentDataContainer.size(), dataLength));
+			currentMetadataContainer.add(new SegmentMetadata(hash, dataLength));
 			currentContainerIndex.add(hash);
 			for (byte eachByte : data) {
-				currentDataContainer.add(eachByte);
+				currentDataContainer[currentContainerSize] = eachByte;
+				currentContainerSize++;
 			}
 
 		} else {
@@ -73,20 +75,14 @@ public class ContainerManager {
 			persistSegmentIndex(currentContainerId, currentMetadataContainer);
 
 			currentContainerId++;
-			/*
-			 * currentDataContainer = new ArrayList<Byte>();
-			 * currentMetadataContainer = new ArrayList<SegmentMetadata>();
-			 * currentContainerIndex = new HashSet<String>();
-			 */
-			currentDataContainer.clear();
+			currentContainerSize = 0;
 			currentMetadataContainer.clear();
 			currentContainerIndex.clear();
-			currentMetadataContainer.add(new SegmentMetadata(hash,
-					currentDataContainer.size(), dataLength));
+			currentMetadataContainer.add(new SegmentMetadata(hash, dataLength));
 			currentContainerIndex.add(hash);
 			for (byte eachByte : data) {
-				currentDataContainer.add(eachByte);
-			}
+				currentDataContainer[currentContainerSize] = eachByte;
+				currentContainerSize++;			}
 		}
 
 	}
@@ -108,20 +104,22 @@ public class ContainerManager {
 
 		Iterator<SegmentMetadata> iterMetadata = containerMetadataStore.get(
 				containerId).iterator();
-		List<Byte> containerBytes;
+		byte[] containerBytes;
 		if (isFileContainerStore) {
 			containerBytes = fileContainerStore.get(containerId);
 		} else {
 			containerBytes = containerStore.get(containerId);
 		}
-		Iterator<Byte> iterData = containerBytes.iterator();
+		
+		int iterIndex = 0;
 
 		while (iterMetadata.hasNext()) {
 			SegmentMetadata currentMetadata = iterMetadata.next();
 			byte[] currentData = new byte[currentMetadata.length];
 
 			for (int i = 0; i < currentMetadata.length; i++) {
-				currentData[i] = iterData.next();
+				currentData[i] = containerBytes[iterIndex];
+				iterIndex++;
 			}
 
 			readCache.set(currentMetadata.hash, currentData);
@@ -132,14 +130,15 @@ public class ContainerManager {
 
 		Iterator<SegmentMetadata> iterMetadata = currentMetadataContainer
 				.iterator();
-		Iterator<Byte> iterData = currentDataContainer.iterator();
+		int iterIndex = 0;
 
 		while (iterMetadata.hasNext()) {
 			SegmentMetadata currentMetadata = iterMetadata.next();
 			byte[] currentData = new byte[currentMetadata.length];
 
 			for (int i = 0; i < currentMetadata.length; i++) {
-				currentData[i] = iterData.next();
+				currentData[i] = currentDataContainer[iterIndex];
+				iterIndex++;
 			}
 
 			readCache.set(currentMetadata.hash, currentData);
@@ -147,7 +146,7 @@ public class ContainerManager {
 	}
 
 	private void persistDataContainer(long containerId,
-			List<Byte> byteContentList) {
+			byte[] byteContentList) {
 		System.out
 				.println("ContainerManager: Persist Data Container with containerId "
 						+ containerId);
