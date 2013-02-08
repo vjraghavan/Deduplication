@@ -26,34 +26,34 @@ public class Reader {
 		byte[] resultData = null;
 		// get from read cache
 		if ((resultData = getDataFromReadCache(hash)) != null) {
-			System.out.println("Reader: cache hit");
+		//	System.out.println("Reader: cache hit");
 			return resultData;
 		}
 
 		// check in current container Index
 		if (containerManager.isHashInCurrentContainer(hash)) {
-			System.out.println("Reader: hash in current container");
+		//	System.out.println("Reader: hash in current container");
 			containerManager.addCurrentContainerIntoReadCache();
 			return readCache.get(hash);
 		}
 
 		// check in bloom filter
 		if (checkBloomFilter(hash)) {
-			System.out.println("Reader: BloomFilter positive");
+		//	System.out.println("Reader: BloomFilter positive");
 			// check segment Index and add data and metadata into read cache
 			Long containerId = segmentIndexStore.get(hash);
 			if (containerId == null) {
-				System.out.println("Reader: not in segment index");
+		//		System.out.println("Reader: not in segment index");
 				return null;
 			} else {
-				System.out.println("Reader: in segment index");
+		//		System.out.println("Reader: in segment index");
 				containerManager
 						.addContainerDataAndMetaIntoReadCache(containerId);
 				return readCache.get(hash);
 			}
 
 		} else {
-			System.out.println("Reader: BloomFilter negative");
+		//	System.out.println("Reader: BloomFilter negative");
 			return null;
 		}
 

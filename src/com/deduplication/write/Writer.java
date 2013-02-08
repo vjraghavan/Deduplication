@@ -25,34 +25,34 @@ public class Writer {
 
 		// check in cache
 		if (checkWriteCache(hash)) {
-			System.out.println("Writer: cache hit");
+		//	System.out.println("Writer: cache hit");
 			return;
 		}
 
 		// check in current container Index
 		if (containerManager.isHashInCurrentContainer(hash)) {
-			System.out.println("Writer: hash in current container");
+		//	System.out.println("Writer: hash in current container");
 			return;
 		}
 
 		// check in bloom filter
 		if (checkBloomFilter(hash)) {
-			System.out.println("Writer: BloomFilter positive");
+		//	System.out.println("Writer: BloomFilter positive");
 			// check segment Index and add it to container if not
 			// present in it.
 			Long containerId = segmentIndexStore.get(hash);
 			if (containerId == null) {
-				System.out.println("Writer: not in segment index");
+		//		System.out.println("Writer: not in segment index");
 				containerManager.addIntoContainer(hash, data, dataLength);
 				return;
 			} else {
-				System.out.println("Writer: in segment index");
+			//	System.out.println("Writer: in segment index");
 				containerManager.addContainerMetadataIntoCache(containerId);
 				return;
 			}
 
 		} else {
-			System.out.println("Writer: BloomFilter negative");
+		//	System.out.println("Writer: BloomFilter negative");
 			containerManager.addIntoContainer(hash, data, dataLength);
 			return;
 		}

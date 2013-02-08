@@ -22,6 +22,9 @@ public class InputReceiver extends Thread {
 	private long resultWriteTime = 0;
 	private long startWriteTime = 0;
 	private long endWriteTime = 0;
+	private long resultReadTime = 0;
+	private long startReadTime = 0;
+	private long endReadTime = 0;
 	private long totalDataLength = 0; 
 	 
 
@@ -114,11 +117,15 @@ public class InputReceiver extends Thread {
 					}
 
 					else if (operation == 1) { // get operation
+						startReadTime = System.currentTimeMillis();
 						storageManager.get(hash);
+						endReadTime = System.currentTimeMillis();
+						resultReadTime += (endReadTime - startReadTime);
 					}
 				}
 				System.out.println("Data Length Received :" + totalDataLength);
 				System.out.println("Time taken for writing :" + resultWriteTime);
+				System.out.println("Time taken for writing :" + resultReadTime);
 			}
 
 		} catch (Exception e) {

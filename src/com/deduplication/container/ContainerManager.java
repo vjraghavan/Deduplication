@@ -56,10 +56,10 @@ public class ContainerManager {
 
 	public void addIntoContainer(String hash, byte[] data, int dataLength) {
 
-		System.out.println("ContainerManager: Add into container");
+		//System.out.println("ContainerManager: Add into container");
 		if (currentContainerSize + dataLength <= CONTAINER_LENGTH) {
 
-			System.out.println("ContainerManager: Add into current container");
+		//	System.out.println("ContainerManager: Add into current container");
 			currentMetadataContainer.add(new SegmentMetadata(hash, dataLength));
 			currentContainerIndex.add(hash);
 			for (byte eachByte : data) {
@@ -68,7 +68,7 @@ public class ContainerManager {
 			}
 
 		} else {
-			System.out.println("ContainerManager: Add into new container");
+			//System.out.println("ContainerManager: Add into new container");
 			persistDataContainer(currentContainerId, currentDataContainer);
 			persistMetadataContainer(currentContainerId,
 					currentMetadataContainer);
@@ -147,16 +147,16 @@ public class ContainerManager {
 	}
 
 	private void persistDataContainer(long containerId, byte[] byteContentList) {
-		System.out
+	/*	System.out
 				.println("ContainerManager: Persist Data Container with containerId "
-						+ containerId);
+						+ containerId);*/
 		try {
 			if (isFileContainerStore) {
 				fileContainerStore.put(containerId, byteContentList);
 			} else {
 				containerStore.put(containerId, byteContentList);
 			}
-			System.out.println("Persisted container successfully");
+	//		System.out.println("Persisted container successfully");
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -165,9 +165,9 @@ public class ContainerManager {
 
 	private void persistMetadataContainer(long currentContainerId,
 			List<SegmentMetadata> currentMetadataContainer) {
-		System.out
+	/*	System.out
 				.println("ContainerManager: Persist MetaData Container with containerId "
-						+ currentContainerId);
+						+ currentContainerId);*/
 		containerMetadataStore
 				.put(currentContainerId, currentMetadataContainer);
 	}
@@ -175,9 +175,9 @@ public class ContainerManager {
 	private void persistSegmentIndex(long currentContainerId,
 			List<SegmentMetadata> currentMetadataContainer) {
 
-		System.out
+		/*System.out
 				.println("ContainerManager: Persist Segment Index with containerId "
-						+ currentContainerId);
+						+ currentContainerId);*/
 
 		Iterator<SegmentMetadata> iter = currentMetadataContainer.iterator();
 		while (iter.hasNext()) {
