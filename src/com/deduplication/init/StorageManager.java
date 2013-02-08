@@ -40,7 +40,7 @@ public class StorageManager {
 
 	public StorageManager() {
 		try {
-			isFileContainerStore = false;
+			isFileContainerStore = true;
 			envConfig = new EnvironmentConfig();
 			envConfig.setAllowCreate(true);
 			envConfig.setTransactional(true);

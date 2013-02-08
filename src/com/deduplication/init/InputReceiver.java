@@ -75,7 +75,7 @@ public class InputReceiver extends Thread {
 					try {
 						bytesToRead = dis.readInt();
 						bytesToRead = littleToBigEndian(bytesToRead);
-						System.out.println("Total bytes " + bytesToRead);
+					//	System.out.println("Total bytes " + bytesToRead);
 						buffer = new byte[bytesToRead];
 						dis.readFully(buffer);
 					} catch (EOFException e) {
@@ -92,16 +92,16 @@ public class InputReceiver extends Thread {
 					operation <<= 16;
 					operation = littleToBigEndian(operation);
 
-					System.out.println("Operation " + operation);
+				//	System.out.println("Operation " + operation);
 
 					for (int i = 0; i < 20; i++) {
 						hash[i] = buffer[offset++];
 					}
 
-					System.out.println("Hash " + new String(hash));
+				//	System.out.println("Hash " + new String(hash));
 
 					dataLength = bytesToRead - offset;
-					System.out.println("dataLength " + dataLength);
+				//	System.out.println("dataLength " + dataLength);
 					
 					totalDataLength += dataLength;
 					
