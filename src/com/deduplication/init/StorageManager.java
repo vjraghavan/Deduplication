@@ -205,4 +205,8 @@ public class StorageManager {
 		}
 		return buf.toString();
 	}
+	
+	public long numDiskReadsSegmentIndex(){
+		return writer.numReadDiskSegmentIndex;
+	}
 }

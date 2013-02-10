@@ -11,6 +11,7 @@ public class Writer {
 	private BloomFilter<String> bloomFilter;
 	private SegmentIndexStore segmentIndexStore;
 	private ContainerManager containerManager;
+	public long numReadDiskSegmentIndex;
 
 	public Writer(WriteCache writeCache, BloomFilter<String> bloomFilter,
 			SegmentIndexStore segmentIndexStore,
@@ -19,6 +20,7 @@ public class Writer {
 		this.bloomFilter = bloomFilter;
 		this.segmentIndexStore = segmentIndexStore;
 		this.containerManager = containerManager;
+		this.numReadDiskSegmentIndex = 0;
 	}
 
 	public void put(String hash, byte[] data, int dataLength) {
@@ -44,6 +46,7 @@ public class Writer {
 			if (containerId == null) {
 		//		System.out.println("Writer: not in segment index");
 				containerManager.addIntoContainer(hash, data, dataLength);
+				numReadDiskSegmentIndex++;
 				return;
 			} else {
 			//	System.out.println("Writer: in segment index");
