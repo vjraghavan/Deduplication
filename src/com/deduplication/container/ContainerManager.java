@@ -17,7 +17,7 @@ import com.deduplication.store.ContainerStore;
 
 public class ContainerManager {
 
-	public static final int CONTAINER_LENGTH = 104857600;
+	public static final int CONTAINER_LENGTH = 10485760;
 	private long currentContainerId;
 	private byte[] currentDataContainer;
 	private List<SegmentMetadata> currentMetadataContainer;
@@ -69,7 +69,7 @@ public class ContainerManager {
 
 		} else {
 			//System.out.println("ContainerManager: Add into new container");
-			persistDataContainer(currentContainerId, currentDataContainer);
+			//persistDataContainer(currentContainerId, currentDataContainer);
 			persistMetadataContainer(currentContainerId,
 					currentMetadataContainer);
 			persistSegmentIndex(currentContainerId, currentMetadataContainer);

@@ -24,10 +24,10 @@ public class Writer {
 	public void put(String hash, byte[] data, int dataLength) {
 
 		// check in cache
-		if (checkWriteCache(hash)) {
+		/*if (checkWriteCache(hash)) {
 		//	System.out.println("Writer: cache hit");
 			return;
-		}
+		}*/
     
 		// check in current container Index
 		if (containerManager.isHashInCurrentContainer(hash)) {
@@ -47,7 +47,7 @@ public class Writer {
 				return;
 			} else {
 			//	System.out.println("Writer: in segment index");
-				containerManager.addContainerMetadataIntoCache(containerId);
+			//	containerManager.addContainerMetadataIntoCache(containerId);
 				return;
 			}
 
