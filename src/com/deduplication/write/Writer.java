@@ -43,10 +43,10 @@ public class Writer {
 			// check segment Index and add it to container if not
 			// present in it.
 			Long containerId = segmentIndexStore.get(hash);
+			numReadDiskSegmentIndex++;
 			if (containerId == null) {
 		//		System.out.println("Writer: not in segment index");
 				containerManager.addIntoContainer(hash, data, dataLength);
-				numReadDiskSegmentIndex++;
 				return;
 			} else {
 			//	System.out.println("Writer: in segment index");
