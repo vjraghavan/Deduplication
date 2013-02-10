@@ -28,7 +28,7 @@ public class Writer {
 		//	System.out.println("Writer: cache hit");
 			return;
 		}
-
+    
 		// check in current container Index
 		if (containerManager.isHashInCurrentContainer(hash)) {
 		//	System.out.println("Writer: hash in current container");
@@ -36,7 +36,7 @@ public class Writer {
 		}
 
 		// check in bloom filter
-		if (checkBloomFilter(hash)) {
+	//	if (checkBloomFilter(hash)) {
 		//	System.out.println("Writer: BloomFilter positive");
 			// check segment Index and add it to container if not
 			// present in it.
@@ -51,12 +51,12 @@ public class Writer {
 				return;
 			}
 
-		} else {
+	/*	} else {
 		//	System.out.println("Writer: BloomFilter negative");
 			containerManager.addIntoContainer(hash, data, dataLength);
 			return;
 		}
-
+    */
 	}
 
 	private boolean checkWriteCache(String hash) {

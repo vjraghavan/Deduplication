@@ -125,7 +125,7 @@ public class InputReceiver extends Thread {
 				}
 				System.out.println("Data Length Received :" + totalDataLength);
 				System.out.println("Time taken for writing :" + resultWriteTime);
-				System.out.println("Time taken for writing :" + resultReadTime);
+				System.out.println("Time taken for Reading :" + resultReadTime);
 			}
 
 		} catch (Exception e) {
