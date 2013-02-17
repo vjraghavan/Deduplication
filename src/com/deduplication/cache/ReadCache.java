@@ -18,7 +18,7 @@ public class ReadCache {
 	}
 
 	public void set(String key, Object value) {
-		readCache.set(key, 3600, value);
+		readCache.set(key, 3600 * 24, value);
 	}
 
 	public byte[] get(String key) {

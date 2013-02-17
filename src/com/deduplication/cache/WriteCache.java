@@ -18,7 +18,7 @@ public class WriteCache {
 	}
 
 	public void set(String key, Object value) {
-		cache.set(key, 3600, value);
+		cache.set(key, 3600 * 24, value);
 	}
 
 	public Object get(String key) {
