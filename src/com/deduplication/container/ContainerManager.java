@@ -31,7 +31,7 @@ public class ContainerManager {
 	private FileContainerStore fileContainerStore;
 	private boolean isFileContainerStore;
 	private int currentContainerSize;
-
+	
 	public ContainerManager(WriteCache writeCache, ReadCache readCache,
 			ContainerMetadataStore containerMetadataStore,
 			ContainerStore containerStore, SegmentIndexStore segmentIndexStore,
@@ -185,6 +185,10 @@ public class ContainerManager {
 			segmentIndexStore.put(hash, currentContainerId);
 			bloomFilter.add(hash);
 		}
+	}
+
+	public void addJustCurrentHashIntoCache(String hash, Long containerId) {
+		writeCache.set(hash, containerId);
 	}
 
 }

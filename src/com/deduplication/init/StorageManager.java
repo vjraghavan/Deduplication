@@ -37,10 +37,12 @@ public class StorageManager {
 	private Writer writer;
 	private Reader reader;
 	private boolean isFileContainerStore;
-
+    private boolean isLocalityCache;
+	
 	public StorageManager() {
 		try {
 			isFileContainerStore = true;
+			isLocalityCache = true;
 			envConfig = new EnvironmentConfig();
 			envConfig.setAllowCreate(true);
 			envConfig.setTransactional(true);
@@ -66,7 +68,7 @@ public class StorageManager {
 					containerMetadataStore, containerStore, segmentIndexStore,
 					bloomFilter, isFileContainerStore, fileContainerStore);
 			writer = new Writer(writeCache, bloomFilter, segmentIndexStore,
-					containerManager);
+					containerManager, isLocalityCache);
 			reader = new Reader(readCache, bloomFilter, segmentIndexStore,
 					containerManager);
 		} catch (Exception e) {
@@ -127,7 +129,7 @@ public class StorageManager {
 				readCache, containerMetadataStore, containerStore,
 				segmentIndexStore, bloomFilter, false, null);
 		Writer writer = new Writer(writeCache, bloomFilter, segmentIndexStore,
-				containerManager);
+				containerManager, true);
 		Reader reader = new Reader(readCache, bloomFilter, segmentIndexStore,
 				containerManager);
 
@@ -209,4 +211,15 @@ public class StorageManager {
 	public long numDiskReadsSegmentIndex(){
 		return writer.numReadDiskSegmentIndex;
 	}
+	
+	public void printCacheDetails(){
+		
+		System.out.println("Total Cache Hits : " + writer.totalCacheHits);
+		System.out.println("Max Cache Hit length : " + writer.maxCacheHitLength);
+		System.out.println("Total Cache Miss : " + writer.totalCacheMiss);
+		if(isLocalityCache)
+		     System.out.println("All Cache Hit Distributions : " + writer.cacheHitLengthList);
+		writer.cacheHitLengthList.clear();
+	}
+	
 }

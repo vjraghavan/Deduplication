@@ -123,10 +123,12 @@ public class InputReceiver extends Thread {
 						resultReadTime += (endReadTime - startReadTime);
 					}
 				}
+				
 				System.out.println("Data Length Received : " + totalDataLength);
 				System.out.println("Time taken for writing : " + resultWriteTime);
 				System.out.println("Number of time disk read: " + storageManager.numDiskReadsSegmentIndex());
 				System.out.println("Time taken for Reading :" + resultReadTime);
+				storageManager.printCacheDetails();
 			}
 
 		} catch (Exception e) {
