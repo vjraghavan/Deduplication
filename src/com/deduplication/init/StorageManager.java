@@ -217,8 +217,11 @@ public class StorageManager {
 		System.out.println("Total Cache Hits : " + writer.totalCacheHits);
 		System.out.println("Max Cache Hit length : " + writer.maxCacheHitLength);
 		System.out.println("Total Cache Miss : " + writer.totalCacheMiss);
-		if(isLocalityCache)
-		     System.out.println("All Cache Hit Distributions : " + writer.cacheHitLengthList);
+		if(isLocalityCache){
+		    System.out.println("**************************************************************");
+			System.out.println("All Cache Hit Distributions : " + writer.cacheHitLengthList);
+			System.out.println("**************************************************************");
+		}
 		writer.cacheHitLengthList.clear();
 	}
 	

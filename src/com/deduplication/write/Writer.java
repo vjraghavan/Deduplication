@@ -49,7 +49,10 @@ public class Writer {
 		}
     
 		if(isLocalityCache)
-			cacheHitLengthList.add(currentCacheHitLength);
+		{
+			if(currentCacheHitLength != 0)
+			   cacheHitLengthList.add(currentCacheHitLength);
+		}
 		
 		if(currentCacheHitLength > maxCacheHitLength)
 			maxCacheHitLength = currentCacheHitLength;
