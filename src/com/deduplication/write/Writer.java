@@ -21,6 +21,8 @@ public class Writer {
 	public int maxCacheHitLength;
 	public int currentCacheHitLength;
 	public List<Integer> cacheHitLengthList;
+	public long containerPrefetchTime;
+	public long segmentReadTime;
 
 	public Writer(WriteCache writeCache, BloomFilter<String> bloomFilter,
 			SegmentIndexStore segmentIndexStore,
@@ -36,6 +38,8 @@ public class Writer {
 		this.maxCacheHitLength = 0;
 		this.isLocalityCache = isLocalityCache;
 		this.cacheHitLengthList = new ArrayList<Integer>();
+		this.containerPrefetchTime = 0;
+		this.segmentReadTime = 0;
 	}
 
 	public void put(String hash, byte[] data, int dataLength) {
@@ -69,7 +73,11 @@ public class Writer {
 		if (checkBloomFilter(hash)) {
 			// check segment Index and add it to container if not
 			// present in it.
+			long start = System.currentTimeMillis();
 			Long containerId = segmentIndexStore.get(hash);
+			long end = System.currentTimeMillis();
+			segmentReadTime += (end - start);
+			
 			numReadDiskSegmentIndex++;
 			if (containerId == null) {
 		        //System.out.println("Writer: not in segment index");
@@ -77,8 +85,9 @@ public class Writer {
 				return;
 			} else {
 			    //System.out.println("Writer: in segment index");
-				if(isLocalityCache)
+				if(isLocalityCache){
 					containerManager.addContainerMetadataIntoCache(containerId);
+				}
 				else
 					containerManager.addJustCurrentHashIntoCache(hash, containerId);
 				return;

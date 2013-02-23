@@ -217,12 +217,26 @@ public class StorageManager {
 		System.out.println("Total Cache Hits : " + writer.totalCacheHits);
 		System.out.println("Max Cache Hit length : " + writer.maxCacheHitLength);
 		System.out.println("Total Cache Miss : " + writer.totalCacheMiss);
-		if(isLocalityCache){
+		writer.totalCacheHits = 0;
+		writer.totalCacheMiss = 0;
+		/*if(isLocalityCache){
 		    System.out.println("**************************************************************");
 			System.out.println("All Cache Hit Distributions : " + writer.cacheHitLengthList);
 			System.out.println("**************************************************************");
-		}
+		}*/
 		writer.cacheHitLengthList.clear();
+	}
+	
+	public void printSegmentDetails(){
+		System.out.println(writer.segmentReadTime);
+		writer.segmentReadTime = 0;
+	}
+	
+	public void printContainerDetails(){
+		System.out.println(containerManager.cacheLoadTime);
+		System.out.println(containerManager.prefetchTime);
+		containerManager.prefetchTime = 0;
+		containerManager.cacheLoadTime = 0;
 	}
 	
 }

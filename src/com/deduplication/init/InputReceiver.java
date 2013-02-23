@@ -128,7 +128,12 @@ public class InputReceiver extends Thread {
 				System.out.println("Time taken for writing : " + resultWriteTime);
 				System.out.println("Number of time disk read: " + storageManager.numDiskReadsSegmentIndex());
 				System.out.println("Time taken for Reading :" + resultReadTime);
+				resultReadTime = 0;
+				resultWriteTime = 0;
+				totalDataLength = 0;
 				storageManager.printCacheDetails();
+				storageManager.printContainerDetails();
+				storageManager.printSegmentDetails();
 			}
 
 		} catch (Exception e) {

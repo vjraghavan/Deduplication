@@ -31,6 +31,8 @@ public class ContainerManager {
 	private FileContainerStore fileContainerStore;
 	private boolean isFileContainerStore;
 	private int currentContainerSize;
+	public long prefetchTime;
+	public long cacheLoadTime;
 	
 	public ContainerManager(WriteCache writeCache, ReadCache readCache,
 			ContainerMetadataStore containerMetadataStore,
@@ -52,6 +54,8 @@ public class ContainerManager {
 		currentDataContainer = new byte[CONTAINER_LENGTH];
 		currentMetadataContainer = new ArrayList<SegmentMetadata>();
 		currentContainerIndex = new HashSet<String>();
+		this.prefetchTime = 0;
+		this.cacheLoadTime = 0;
 	}
 
 	public void addIntoContainer(String hash, byte[] data, int dataLength) {
@@ -94,11 +98,18 @@ public class ContainerManager {
 
 	public void addContainerMetadataIntoCache(Long containerId) {
 
+		long start = System.currentTimeMillis();
 		Iterator<SegmentMetadata> iter = containerMetadataStore
 				.get(containerId).iterator();
+		long end = System.currentTimeMillis();
+		prefetchTime += end - start;
+		
+		start = System.currentTimeMillis();
 		while (iter.hasNext()) {
 			writeCache.set(iter.next().hash, containerId);
 		}
+		end = System.currentTimeMillis();
+		cacheLoadTime += end - start;
 	}
 
 	public void addContainerDataAndMetaIntoReadCache(Long containerId) {
