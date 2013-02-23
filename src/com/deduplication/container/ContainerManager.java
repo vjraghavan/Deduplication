@@ -33,6 +33,8 @@ public class ContainerManager {
 	private int currentContainerSize;
 	public long prefetchTime;
 	public long cacheLoadTime;
+	public long persistSegmentIndexTime;
+	public long persistMetadataTime;
 	
 	public ContainerManager(WriteCache writeCache, ReadCache readCache,
 			ContainerMetadataStore containerMetadataStore,
@@ -56,6 +58,8 @@ public class ContainerManager {
 		currentContainerIndex = new HashSet<String>();
 		this.prefetchTime = 0;
 		this.cacheLoadTime = 0;
+		this.persistSegmentIndexTime = 0;
+		this.persistMetadataTime = 0;
 	}
 
 	public void addIntoContainer(String hash, byte[] data, int dataLength) {
@@ -74,10 +78,18 @@ public class ContainerManager {
 		} else {
 			//System.out.println("ContainerManager: Add into new container");
 			//persistDataContainer(currentContainerId, currentDataContainer);
+			
+			long start = System.currentTimeMillis();
 			persistMetadataContainer(currentContainerId,
 					currentMetadataContainer);
+			long end = System.currentTimeMillis();
+			persistMetadataTime += end - start;
+			
+			start = System.currentTimeMillis();
 			persistSegmentIndex(currentContainerId, currentMetadataContainer);
-
+			end = System.currentTimeMillis();
+			persistSegmentIndexTime += end - start;
+			
 			currentContainerId++;
 			currentContainerSize = 0;
 			currentMetadataContainer.clear();

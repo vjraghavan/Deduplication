@@ -23,7 +23,7 @@ public class Writer {
 	public List<Integer> cacheHitLengthList;
 	public long containerPrefetchTime;
 	public long segmentReadTime;
-
+    
 	public Writer(WriteCache writeCache, BloomFilter<String> bloomFilter,
 			SegmentIndexStore segmentIndexStore,
 			ContainerManager containerManager, boolean isLocalityCache) {

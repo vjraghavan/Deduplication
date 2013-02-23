@@ -228,15 +228,19 @@ public class StorageManager {
 	}
 	
 	public void printSegmentDetails(){
-		System.out.println(writer.segmentReadTime);
+		System.out.println("Segment Read Time " + writer.segmentReadTime);
 		writer.segmentReadTime = 0;
 	}
 	
 	public void printContainerDetails(){
-		System.out.println(containerManager.cacheLoadTime);
-		System.out.println(containerManager.prefetchTime);
+		System.out.println("Cache Load Time " + containerManager.cacheLoadTime);
+		System.out.println("Container Prefetch Time " + containerManager.prefetchTime);
+		System.out.println("Persist Metadata Time " + containerManager.persistMetadataTime);
+		System.out.println("Persist Segment Index Time" + containerManager.persistSegmentIndexTime);
 		containerManager.prefetchTime = 0;
 		containerManager.cacheLoadTime = 0;
+		containerManager.persistMetadataTime = 0;
+		containerManager.persistSegmentIndexTime = 0;
 	}
 	
 }
