@@ -212,6 +212,10 @@ public class StorageManager {
 		return writer.numReadDiskSegmentIndex;
 	}
 	
+	public void resetNumDiskReadSegmentIndex(){
+		writer.resetSegmentIndexReadCount();
+	}
+	
 	public void printCacheDetails(){
 		
 		System.out.println("Total Cache Hits : " + writer.totalCacheHits);
@@ -219,6 +223,7 @@ public class StorageManager {
 		System.out.println("Total Cache Miss : " + writer.totalCacheMiss);
 		writer.totalCacheHits = 0;
 		writer.totalCacheMiss = 0;
+		writer.maxCacheHitLength = 0;
 		/*if(isLocalityCache){
 		    System.out.println("**************************************************************");
 			System.out.println("All Cache Hit Distributions : " + writer.cacheHitLengthList);

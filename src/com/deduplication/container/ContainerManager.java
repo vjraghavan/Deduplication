@@ -79,16 +79,9 @@ public class ContainerManager {
 			//System.out.println("ContainerManager: Add into new container");
 			//persistDataContainer(currentContainerId, currentDataContainer);
 			
-			long start = System.currentTimeMillis();
 			persistMetadataContainer(currentContainerId,
 					currentMetadataContainer);
-			long end = System.currentTimeMillis();
-			persistMetadataTime += end - start;
-			
-			start = System.currentTimeMillis();
 			persistSegmentIndex(currentContainerId, currentMetadataContainer);
-			end = System.currentTimeMillis();
-			persistSegmentIndexTime += end - start;
 			
 			currentContainerId++;
 			currentContainerSize = 0;

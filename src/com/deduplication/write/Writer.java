@@ -54,8 +54,8 @@ public class Writer {
     
 		if(isLocalityCache)
 		{
-			if(currentCacheHitLength != 0)
-			   cacheHitLengthList.add(currentCacheHitLength);
+		/*	if(currentCacheHitLength != 0)
+			   cacheHitLengthList.add(currentCacheHitLength);*/
 		}
 		
 		if(currentCacheHitLength > maxCacheHitLength)
@@ -69,6 +69,7 @@ public class Writer {
 			return;
 		}
 
+		
 		// check in bloom filter
 		if (checkBloomFilter(hash)) {
 			// check segment Index and add it to container if not
@@ -107,6 +108,10 @@ public class Writer {
 
 	private boolean checkBloomFilter(String hash) {
 		return bloomFilter.contains(hash);
+	}
+	
+	public void resetSegmentIndexReadCount(){
+		numReadDiskSegmentIndex = 0;
 	}
 	
 }

@@ -131,9 +131,10 @@ public class InputReceiver extends Thread {
 				resultReadTime = 0;
 				resultWriteTime = 0;
 				totalDataLength = 0;
+				storageManager.resetNumDiskReadSegmentIndex();
 				storageManager.printCacheDetails();
-				storageManager.printContainerDetails();
-				storageManager.printSegmentDetails();
+				//storageManager.printContainerDetails();
+				//storageManager.printSegmentDetails();
 			}
 
 		} catch (Exception e) {
